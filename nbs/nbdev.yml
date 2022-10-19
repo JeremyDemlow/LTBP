@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "LTBP"
+  site-url: "https://JeremyDemlow.github.io/LTBP"
+  description: "Likelihood To Buy A Pass"
+  repo-branch: main
+  repo-url: "https://github.com/JeremyDemlow/LTBP"
