@@ -1,0 +1,11 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - section: Tutorials
+        contents:
+        - 00a_Data_Preperation_Example.ipynb
+      - section: Project Code
+        contents:
+        - 01a_Model_Utilities.ipynb
+        - 01b_Models.ipynb

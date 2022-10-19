@@ -1,0 +1,153 @@
+Age:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: StandardScaler
+  udf_name: Age_ECID_Temporal
+  var_type: cont
+AvgVisitPerSeason:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: StandardScaler
+  udf_name: AvgVisitPerSeason_ECID_Temporal
+  var_type: cont
+BoughtPass:
+  feature_type: TEMP
+  input_definition: LABEL
+  input_type: SEASONYEAR
+  udf_name: BoughtPass_ECID_Temporal
+  var_type: cat
+DESTINATIONGEOAFINITYLABEL:
+  feature_type: STATIC
+  input_definition: FEATURE
+  input_type: null
+  transformation: OrdinalEncoder
+  udf_name: DESTINATIONGEOAFINITYLABEL
+  var_type: cat
+EverCorePass:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: ORIGIN_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: EverCorePass_ECID_Temporal
+  var_type: cat
+EverPass:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: ORIGIN_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: EverPass_ECID_Temporal
+  var_type: cat
+GenderCode:
+  feature_type: STATIC
+  input_definition: FEATURE
+  input_type: null
+  transformation: OrdinalEncoder
+  udf_name: GenderCode
+  var_type: cat
+GuestBehavior:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation: OrdinalEncoder
+  udf_name: GuestBehavior_ECID_Temporal
+  var_type: cat
+IsEpicMixActivated:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation: OrdinalEncoder
+  udf_name: IsEpicMixActivated_ECID_Temporal
+  var_type: cat
+MarketingZone:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation: OrdinalEncoder
+  udf_name: MarketingZone_ECID_Temporal
+  var_type: cat
+MostCommonTicketComp:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: MostCommonTicketComp_ECID_Temporal
+  var_type: cat
+MostSubSeasonVisited:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: MostSubSeasonVisited_ECID_Temporal
+  var_type: cat
+MostVisitedRegion:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: MostVisitedRegion_ECID_Temporal
+  var_type: cat
+MostVisitedResort:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: MostVisitedResort_ECID_Temporal
+  var_type: cat
+OnlySingleResortKey:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: OnlySingleResortKey_ECID_Temporal
+  var_type: cat
+PartnerResortScannerFlag:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: PartnerResortScannerFlag_ECID_Temporal
+  var_type: cat
+ResortsVisited:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: ResortsVisited_ECID_Temporal
+  var_type: cont
+SkierabilityLabel:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation: OrdinalEncoder
+  udf_name: SkierabilityLabel_ECID_Temporal
+  var_type: cat
+SubSeasonsPerYear:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: StandardScaler
+  udf_name: SubSeasonsPerYear_ECID_Temporal
+  var_type: cont
+TotalSeasonsScanned:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: TotalSeasonsScanned_ECID_Temporal
+  var_type: cat
+TotalVisits:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: StandardScaler
+  udf_name: TotalVisits_ECID_Temporal
+  var_type: cont
+VisitMostInPeak:
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation: OrdinalEncoder
+  udf_name: VisitMostInPeak_ECID_Temporal
+  var_type: cat

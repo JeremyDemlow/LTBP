@@ -1,0 +1,9 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_Core.ipynb
+      - 00a_Data_Preperation_Example.ipynb
+      - 01a_Models.ipynb
+      - 01b_Model_Utilities.ipynb
+      - 02a_Data_Creation.ipynb
