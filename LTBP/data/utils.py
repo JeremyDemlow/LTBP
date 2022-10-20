@@ -150,7 +150,7 @@ def query_feature_sets_to_adls_parquet_sf_fs(
     azure_container: str,
     data_lake_path: str,
     query_file_path: str,
-    data_lake_sas_token: str = os.environ["DATALAKE_SAS_TOKEN_SECRET"],
+    data_lake_sas_token: str, # os.environ["DATALAKE_SAS_TOKEN_SECRET"]
     partition_by: str = None,
     max_file_size: str = "3200000",
     header: str = "True",
