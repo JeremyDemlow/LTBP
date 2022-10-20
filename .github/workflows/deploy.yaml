@@ -1,7 +1,8 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [ "main", "master" ]
+    # branches: [ "main", "master" ]
+    branches: ["reworking_ltbp_github"]
   workflow_dispatch:
 jobs:
   deploy:
