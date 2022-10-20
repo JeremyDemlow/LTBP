@@ -6,9 +6,21 @@ __all__ = ['return_dict_type', 'create_sklearn_preprocess_baseline_dict', 'retur
            'move_dev_holdout_table_to_prod_location', 'holdout_set_to_prod']
 
 # %% ../../nbs/01b_Model_Utilities.ipynb 3
+from data_system_utilities.azure.storage import FileHandling
+from machine_learning_utilities import preprocessing
+
+from ..data.utils import snowflake_query, get_yaml_dicts
+
+from sklearn import metrics
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+
+from rfpimp import *
+
 import sklearn.preprocessing as y_transform
 import os
 import logging
+import pickle
 
 # %% ../../nbs/01b_Model_Utilities.ipynb 4
 def return_dict_type(
@@ -221,17 +233,17 @@ def evaluate(model, X_valid, y_valid, y_var, feature_importance=True):
     acc = metrics.accuracy_score(y_valid, y_pred)
     bacc = metrics.balanced_accuracy_score(y_valid, y_pred)
     columns = ['auc', 'acc', 'bacc']
-    logger.info(f'{y_var} AUC: {auc:.3f}    Accuracy: {acc:.3f}    Balanced Accuracy: {bacc:.3f}')
+    logging.info(f'{y_var} AUC: {auc:.3f}    Accuracy: {acc:.3f}    Balanced Accuracy: {bacc:.3f}')
     if feature_importance is True:
         feat_df = pd.read_csv('features.csv')
-        logger.info(f'features: /n {feat_df.columns}')
+        logging.info(f'features: /n {feat_df.columns}')
         feat_df = dict(zip(feat_df.dropna()['featurenames'], feat_df.dropna()['dtypes']))
-        logger.info(f'reduced to independent variables: /n {feat_df}')
+        logging.info(f'reduced to independent variables: /n {feat_df}')
         fi_permutation = importances(model, pd.DataFrame(X_valid, columns=list(feat_df.keys())), pd.DataFrame(y_valid)) # noqa:
         fi_permutation = (fi_permutation
                           .reset_index()
                           .rename({'Feature': 'cols', 'Importance': 'imp'}, axis=1))
-        logger.info(f'Feature Importance df: \n {fi_permutation}')
+        logging.info(f'Feature Importance df: \n {fi_permutation}')
         fi_permutation.to_csv('fi_permutation.csv', index=False)
     return auc, acc, bacc, columns
 
@@ -256,30 +268,30 @@ def evaluate_test(model, X_test, y_test, y_var, ecid_list, table_name,
     auc = metrics.roc_auc_score(y_test, y_pred_proba[:, 1])
     acc = metrics.accuracy_score(y_test, y_pred)
     bacc = metrics.balanced_accuracy_score(y_test, y_pred)
-    logger.info(f'For Test Set Unseen Data {y_var} AUC: {auc:.3f} Accuracy: {acc:.3f} Balanced Accuracy: {bacc:.3f}')
-    logger.info(f'Size of Test Data set: {len(y_test)}')
+    logging.info(f'For Test Set Unseen Data {y_var} AUC: {auc:.3f} Accuracy: {acc:.3f} Balanced Accuracy: {bacc:.3f}')
+    logging.info(f'Size of Test Data set: {len(y_test)}')
     test_df_results = pd.DataFrame(ecid_list)
     if grain_value is not None:
         test_df_results['SUBSEASON'] = grain_value
     test_df_results['PROBABILITY'] = y_pred_proba[:, 1]
-    logger.info(f'Preview Test Push df \n {test_df_results.head(2)}')
-    logger.info(f'Preview Test Size: \n {test_df_results.shape[0]}')
+    logging.info(f'Preview Test Push df \n {test_df_results.head(2)}')
+    logging.info(f'Preview Test Size: \n {test_df_results.shape[0]}')
     sf = snowflake_query(sfSchema=sfSchema)
     sf.infer_to_snowflake(test_df_results,
                           table_name=table_name)
-    logger.info('saving test prediction file')
+    logging.info('saving test prediction file')
     test_df_results.to_csv(file_output, index=False)
-    logger.info(f'sending prediction file to azure {container_name} to {blob_dest}')
-    blob_pusher(file_path=[file_output],
-                container_name=container_name,
-                blob_dest=[blob_dest],
-                connection_str=connection_str,
-                overwrite=True)
-    os.unlink(file_output)
+    logging.info(f'sending prediction file to azure {container_name} to {blob_dest}')
+    # blob_pusher(file_path=[file_output],
+    #             container_name=container_name,
+    #             blob_dest=[blob_dest],
+    #             connection_str=connection_str,
+    #             overwrite=True)
+    # os.unlink(file_output)
 
 # %% ../../nbs/01b_Model_Utilities.ipynb 21
 def move_dev_holdout_table_to_prod_location(sf, exp):
-    logger.info('Replacing Prod HoldOut With Newest Promoted')
+    logging.info('Replacing Prod HoldOut With Newest Promoted')
     sf.run_str_query(f"""
                       CREATE OR REPLACE TABLE MACHINELEARNINGOUTPUTS.ltbp.{exp['holdout_tb_name']} AS
                       SELECT * FROM MACHINELEARNINGOUTPUTS.DEV.{exp['holdout_tb_name']};
@@ -291,25 +303,25 @@ def holdout_set_to_prod(connection_str: str, yaml_files: list = ['etl.yaml', 'ex
     etl, exp = get_yaml_dicts(yaml_files)
     fh = FileHandling(connection_str)
     if exp['holdout_tb_name'].upper() in sf.run_str_query("show tables;").name.tolist():
-        logger.info(f"Deleting current prod hold out {exp['holdout_tb_name'].upper()}")
+        logging.info(f"Deleting current prod hold out {exp['holdout_tb_name'].upper()}")
         sf.run_str_query(f"DROP TABLE MACHINELEARNINGOUTPUTS.{sfschema}.{exp['holdout_tb_name']};")
-    logger.info("inference only pipeline pushing hold out data set to prodction table")
-    timestamp = query_production_timestamp(exp, etl)
-    path = [etl['data_lake']['stage_path'].replace('COMMITID', str(timestamp)) + '/holdout/']
+    logging.info("inference only pipeline pushing hold out data set to prodction table")
+    # timestamp = query_production_timestamp(exp, etl)
+    path = [etl['data_lake']['stage_path'].replace('COMMITID', "TODO:") + '/holdout/']
     ls_list = fh.ls_blob(container_name='vailadls',
                          path=path[0],
                          recursive=True)
     for p in [path[0] + x for x in ls_list]:
-        logger.warning('if the model and data are not in alphabetical order this method will not work will need to customize')
-        logger.info(f'holdout data set {p[0]}')
-        blob_puller(files=[p],
-                    connection_str=connection_str,
-                    container_name='vailadls',
-                    drop_location='.',
-                    overwrite=True
-                    )
+        logging.warning('if the model and data are not in alphabetical order this method will not work will need to customize')
+        logging.info(f'holdout data set {p[0]}')
+        # blob_puller(files=[p],
+        #             connection_str=connection_str,
+        #             container_name='vailadls',
+        #             drop_location='.',
+        #             overwrite=True
+        #             )
         df = pd.read_csv(p.split('/')[-1])
-        logger.info(f'Preview Test \n {df.head(2)}')
-        logger.info(f'Preview Test Size: \n {df.shape[0]}')
+        logging.info(f'Preview Test \n {df.head(2)}')
+        logging.info(f'Preview Test Size: \n {df.shape[0]}')
         sf.infer_to_snowflake(df,
                               table_name=exp['holdout_tb_name'].upper())

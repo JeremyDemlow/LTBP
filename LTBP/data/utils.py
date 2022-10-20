@@ -5,14 +5,16 @@ __all__ = ['get_yaml_dicts', 'generate_data_lake_query', 'read_sfQueries_txt_sql
            'query_feature_sets_to_adls_parquet_sf_fs']
 
 # %% ../../nbs/00_Data_Utils.ipynb 3
+from data_system_utilities.snowflake.query import Snowflake
+from data_system_utilities.snowflake.copyinto import sf_to_adls_url_query_generator
 from data_system_utilities.file_parsers import yaml
-from fastcore.script import Param, call_parse
-from fastcore.xtras import is_listy
-from .. import files
 
-import pandas as pd
+from fastcore.xtras import is_listy
+
+import LTBP.files as files
 import os
 import logging
+import sys
 
 # %% ../../nbs/00_Data_Utils.ipynb 4
 def get_yaml_dicts(yaml_file_names: list):
@@ -91,7 +93,7 @@ def generate_data_lake_query(
 # %% ../../nbs/00_Data_Utils.ipynb 9
 def read_sfQueries_txt_sql_file(file_name):
     """Simple utilty to read query files"""
-    with open(os.path.join(sfQueries.__path__[0], file_name)) as f:
+    with open(os.path.join(files.__path__[0], 'sql_files', file_name)) as f:
         read_data = ''.join(f.readlines())
         f.close()
     return read_data
