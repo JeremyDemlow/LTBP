@@ -5,5 +5,16 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
+    env:
+      DATALAKE_CONN_STR_SECRET: ${{ secrets.DATALAKE_CONN_STR_SECRET }}
+      DATALAKE_SAS_TOKEN_SECRET: ${{ secrets.DATALAKE_SAS_TOKEN_SECRET }}
+      DATALAKE_SECRET: ${{ secrets.DATALAKE_SECRET }}
+      sfAccount: ${{ secrets.SFACCOUNT }}
+      sfDatabase: ${{ secrets.SFDATABASE }}
+      sfPswd: ${{ secrets.SFPSWD }}
+      sfRole: ${{ secrets.SFROLE }}
+      sfSchema: ${{ secrets.SFSCHEMA }}
+      sfUser: ${{ secrets.SFUSER }}
+      sfWharehouse: ${{ secrets.SFWAREHOUSE }}
     runs-on: ubuntu-latest
     steps: [uses: fastai/workflows/quarto-ghp@master]
