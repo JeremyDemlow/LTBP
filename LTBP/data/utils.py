@@ -9,9 +9,9 @@ from data_system_utilities.snowflake.query import Snowflake
 from data_system_utilities.snowflake.copyinto import sf_to_adls_url_query_generator
 from data_system_utilities.file_parsers import yaml
 
-from fastcore.xtras import is_listy
+from fastcore.xtras import is_listy 
+from .. import files
 
-import LTBP.files as files
 import os
 import logging
 import sys
