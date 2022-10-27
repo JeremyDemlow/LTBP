@@ -6,20 +6,16 @@ __all__ = ['return_dict_type', 'create_sklearn_preprocess_baseline_dict', 'retur
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 3
 from data_system_utilities.azure.storage import FileHandling
-from data_system_utilities.file_parsers import yaml
 from data_system_utilities.snowflake.utils import make_stage_query_generator
 
 from machine_learning_utilities import preprocessing
 
 from ..data.utils import snowflake_query, get_yaml_dicts, generate_data_lake_query
 
-from sklearn import metrics
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 
 from rfpimp import *
 
-import sklearn.preprocessing as y_transform
 import os
 import logging
 import pickle
@@ -27,8 +23,8 @@ import pandas as pd
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 4
 def return_dict_type(
-    pre_process_type:dict # {k:v} dictionary of columns name and tranformation type
-                    ):
+    pre_process_type: dict  # {k:v} dictionary of columns name and tranformation type
+):
     """
     Simplify the standard process for sklearn preprocessing pipelines
     """
@@ -75,8 +71,8 @@ def return_dict_type(
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 7
 def create_sklearn_preprocess_baseline_dict(
-    cat_vars:list, # list of categorical variables with sklearn transformer
-    cont_vars:list, # list of continous variables with sklearn transformer
+    cat_vars: list,  # list of categorical variables with sklearn transformer
+    cont_vars: list,  # list of continous variables with sklearn transformer
 ):
     """wrapper around ``return_dict_type`` to go through cat and cont vars
     """
@@ -110,20 +106,20 @@ def return_list_of_vars(variables):
 
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 13
-def prepare_training_set(df:pd.DataFrame,
-                         y_var:list,
-                         y_scaler_type:'SklearnMetric',
-                         sklearn_pipe:'SklearnPipeline',
-                         etl_dict:dict,
-                         models_dict:dict,
-                         adls_path:str,
-                         experiment_name:str,
+def prepare_training_set(df: pd.DataFrame,
+                         y_var: list,
+                         y_scaler_type:object,
+                         sklearn_pipe:object,
+                         etl_dict: dict,
+                         models_dict: dict,
+                         adls_path: str,
+                         experiment_name: str,
                          connection_str: str,
-                         identifiers:list=['ECID'],
-                         test_set:bool=True,
-                         validation_split:float=.20,
-                         test_split:float=.15,
-                         seed:int=1320,
+                         identifiers: list = ['ECID'],
+                         test_set: bool = True,
+                         validation_split: float = .20,
+                         test_split: float = .15,
+                         seed: int = 1320,
                          as_type=int):
     """TODO: Working on Multi-Col Labels split and preprocess data set for model training purposes"""
     scaler = y_scaler_type
@@ -135,7 +131,7 @@ def prepare_training_set(df:pd.DataFrame,
     if test_set is True:
         X_valid, X_test, y_valid, y_test = train_test_split(X_valid,
                                                             y_valid,
-                                                            test_size=.15,
+                                                            test_size=test_split,
                                                             random_state=seed)
         logging.info(f'Successfully Spilt Data\nTrain: {X_train.shape}, {y_train.shape}\nValid: {X_valid.shape}, {y_valid.shape}\nTest: {X_test.shape}, {y_test.shape}')
     else:
@@ -143,6 +139,7 @@ def prepare_training_set(df:pd.DataFrame,
         X_test = None
         logging.info(f'Successfully Spilt Data\nTrain: {X_train.shape}, {y_train.shape}\nValid: {X_valid.shape}, {y_valid.shape}')
     id_list = X_test[identifiers] if test_set is True else X_valid[identifiers]
+    logging.info(f'Size of the id_list for the hold set {id_list.shape}')
     if scaler:
         y_train = scaler.fit_transform(y_train.reset_index()[y_var[0]])
         y_train = pd.DataFrame(y_train)
@@ -170,10 +167,11 @@ def prepare_training_set(df:pd.DataFrame,
     if scaler:
         logging.info('saving y_var scaler to adls')
         save_sklearn_object_to_data_lake(save_object=scaler,
-         file_name=models_dict[experiment_name]['y_preprocess_object_name'],
-         adls_path=adls_path,
-         container_name=etl_dict['azure_container'],
-         connection_str=connection_str)
+                                         file_name=(os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')
+                                                    + models_dict[experiment_name]['y_preprocess_object_name']),
+                                         adls_path=adls_path,
+                                         container_name=etl_dict['azure_container'],
+                                         connection_str=connection_str)
 
     X_train = sklearn_pipe.fit_transform(X_train)
     cols = preprocessing.get_column_names_from_transformer(sklearn_pipe)
@@ -191,12 +189,12 @@ def prepare_training_set(df:pd.DataFrame,
         X_test.columns = cols
 
     save_sklearn_object_to_data_lake(save_object=sklearn_pipe,
-                                     file_name=models_dict[experiment_name]['x_preprocess_object_name'],
+                                     file_name=(os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')
+                                                + models_dict[experiment_name]['x_preprocess_object_name']),
                                      adls_path=adls_path,
                                      container_name=etl_dict['azure_container'],
                                      connection_str=connection_str)
     return X_train, X_valid, X_test, y_train, y_valid, y_test, sklearn_pipe, scaler, id_list
-
 
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 16
@@ -240,14 +238,14 @@ def save_sklearn_object_to_data_lake(
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 21
 def create_stage_and_query_stage_sf(
-    sf, # Snowflake connection 
-    etl:dict, # template etl input expected format
-    udf_inputs:dict, # template udf input expected format
-    train_or_inference:str, # training or inference
-    experiment_name:str, # name of experiment being ran
-    indentification:list=None,
-    experiment:bool=True
-    ):
+    sf,  # Snowflake connection
+    etl: dict,  # template etl input expected format
+    udf_inputs: dict,  # template udf input expected format
+    train_or_inference: str,  # training or inference
+    experiment_name: str,  # name of experiment being ran
+    indentification: list = None,
+    experiment: bool = True
+):
     features, udf_inputs, etl = get_yaml_dicts(['features.yaml', 'udf_inputs.yaml', 'etl.yaml'])
     stage_url = f"""azure://{etl['azure_account']}.blob.core.windows.net/{etl['azure_container']}/{etl['data_lake_path']}{(os.path.join('experiments', experiment_name)
         if experiment else os.path.join('LocalRunTest'))}""".replace(' ', '')
@@ -259,16 +257,16 @@ def create_stage_and_query_stage_sf(
     )
     sf = snowflake_query()
     _ = sf.run_sql_str(stage_query)
-    # TODO: Figure out a identification feature like season year 
+    # TODO: Figure out a identification feature like season year
     # Udf grain is ECID, which is easy to get, but season year isn't obivous some thought is needed
     indentification = indentification if indentification is not None else [col.split('.')[-1] for col in udf_inputs[train_or_inference]['UDF_GRAIN']]
     columns = [col.upper() for col in features.keys()]
-    query = generate_data_lake_query(stage_name=(etl["stage_name"] 
-                                                 + etl['FY_folder'] 
+    query = generate_data_lake_query(stage_name=(etl["stage_name"]
+                                                 + etl['FY_folder']
                                                  + os.environ.get('CI_COMMIT_SHA', 'LocalRunTest')),
-         stage_path=train_or_inference.lower()+'_data/',
-         columns=indentification + columns,
-         extra_statement=None)
+                                     stage_path=train_or_inference.lower()+'_data/',
+                                     columns=indentification + columns,
+                                     extra_statement=None)
     logging.info(f'adls snowflake stage query {query}')
     sf = snowflake_query()
     df = sf.run_sql_str(query)

@@ -1,12 +1,18 @@
 BASELINE:
   description: Standard baseline xgb_hyperopt approach status quo of LTBP of the past
+  hyper_opt_subsample_size: 2750000
+  hyperopt_evals: 2
   model_trainer: train_xgb
+  training_subsample_size: 5000000
   x_preprocess_object_name: standard_pipe.pickle
   y_preprocess_object_name: null
   y_scaler_type: null
 NOHYPEROPT:
   description: Only here to see if it works delete at some point xgb_fit_only
+  hyer_opt_subsample_size: null
+  hyper_opt_subsample_size: null
   model_trainer: train_xgb_basic
+  training_subsample_size: 5000000
   x_preprocess_object_name: standard_pipe.pickle
   y_preprocess_object_name: null
   y_scaler_type: null
@@ -15,5 +21,6 @@ hold_out_table: LTBP_HOLDOUT_TEST_MODEL_RESULTS
 idenfication:
 - ECID
 - SEASONYEAR
+modeling_adls_path: modeling/
 preprocessors_adls_path: preprocessors/
 tracking_table: LTBP_MODEL_TRACKING_FY23

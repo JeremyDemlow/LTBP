@@ -4,20 +4,16 @@
 __all__ = ['logger', 'HpOptBinary', 'train_xgb', 'train_xgb_basic', 'train_logistic']
 
 # %% ../../nbs/01b_Models.ipynb 3
-from machine_learning_utilities.training.hypertuning import *
-from sklearn.model_selection import train_test_split
+from machine_learning_utilities.training.hypertuning import * # noqa:
 from sklearn import metrics
 from hyperopt import hp
-from hyperopt import fmin, tpe, STATUS_OK, Trials, hp, space_eval
+from hyperopt import fmin, tpe, STATUS_OK, Trials, space_eval
 from sklearn.linear_model import LogisticRegression
 from rfpimp import * # noqa:
 
-from sklearn import metrics
 import xgboost as xgb
 import numpy as np
 import logging
-import pandas as pd
-import os
 
 
 logging.basicConfig(level=logging.INFO)
@@ -152,11 +148,11 @@ def train_xgb(X_train,
     }
     logging.info(f'Hyper tuning on {X_train[0:sub].shape[0]} rows')
     opt = HpOptBinary(
-    X_train=X_train[0:sub].to_numpy(),
-    X_test=X_valid.to_numpy(),
-    y_train=y_train[0:sub].to_numpy(),
-    y_test=y_valid.to_numpy(),
-    parameter_space=parameter_space
+        X_train=X_train[0:sub].to_numpy(),
+        X_test=X_valid.to_numpy(),
+        y_train=y_train[0:sub].to_numpy(),
+        y_test=y_valid.to_numpy(),
+        parameter_space=parameter_space
     )
     best = opt.optimize(max_evals=evals)
     logging.info(f'Full training on {X_train[0:train].shape[0]} rows')

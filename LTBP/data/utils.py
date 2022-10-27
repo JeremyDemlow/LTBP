@@ -10,7 +10,7 @@ from data_system_utilities.snowflake.copyinto import sf_to_adls_url_query_genera
 from data_system_utilities.file_parsers import yaml
 from machine_learning_utilities.dataset_creation.snowflake import select_static_features, select_additional_features, create_base_query
 
-from fastcore.xtras import is_listy 
+from fastcore.xtras import is_listy
 from .. import files
 
 import os
@@ -18,21 +18,13 @@ import logging
 import sys
 
 # %% ../../nbs/00_Data_Utils.ipynb 4
-def get_yaml_dicts(yaml_file_names: list):
+def get_yaml_dicts(
+    yaml_file_names: list  # list of yaml file(s) names that are all in the yaml_files section of the repo
+):
     """
     Give a list of files to this function from the /files
     in a library and it will read/Parse yaml files and
     return a list of dictionaries to unpack
-
-    How to use:
-    yaml_file_list = ['dataset.yaml', 'etl.yaml', 'experiment.yaml']
-    data, etl, exp = get_yaml_dicts(yaml_file_list)
-
-    Args:
-    * yaml_file_names (list):
-
-    Returns:
-    *  list : list of dictionaries
     """
     yaml_file_names = yaml_file_names if is_listy(yaml_file_names) else list(yaml_file_names)
     yaml_dicts = []
@@ -43,20 +35,15 @@ def get_yaml_dicts(yaml_file_names: list):
 
 # %% ../../nbs/00_Data_Utils.ipynb 6
 def generate_data_lake_query(
-    stage_name, stage_path, columns, header=True, extra_statement=None
+    stage_name: str,  # name of the sf stage to be created is just a file location pointer
+    stage_path: str,  # adls file path location to start the stage location
+    columns: list,  # columns to query parquet files in adls
+    header=True,  # parquet files have headers
+    extra_statement: str = None  # adding sql statements if desired
 ):
     """
     Given the columns names are provided this query will query out parquet data
     from azure datalake all in varchar this is the basic approach.
-
-    Args:
-        stage_name (str): Snowflake stage name
-        stage_path (str): Snowflake stage path
-        columns (list): list/dict of column names
-        extra_statement (str, optional): Extra snowflake command. Defaults to None.
-
-    Returns:
-        str: Query produced through this function
     """
     query = f"""
     select
@@ -92,7 +79,9 @@ def generate_data_lake_query(
     return query
 
 # %% ../../nbs/00_Data_Utils.ipynb 9
-def read_sfQueries_txt_sql_file(file_name):
+def read_sfQueries_txt_sql_file(
+    file_name: str  # sql file name to read
+):
     """Simple utilty to read query files"""
     with open(os.path.join(files.__path__[0], 'sql_files', file_name)) as f:
         read_data = ''.join(f.readlines())
@@ -100,18 +89,13 @@ def read_sfQueries_txt_sql_file(file_name):
     return read_data
 
 # %% ../../nbs/00_Data_Utils.ipynb 10
-def return_sf_type(dtype: str, varchar: bool):
+def return_sf_type(
+    dtype: str,  # data type from a df in string form
+    varchar: bool = True  # to default all variables to VARCHAR
+):
     """
     simple function to convert dytpes to snowflake dtypes this
     will be come a very useful thing to have as this will dtype
-    Args:
-    * dtype (str): dtype from a df in sting form
-    * varchar (bool): to default all variables to VARCHAR
-    this happens due to bad vendor data and can't be resloved
-    with out reading in the whole data set with low_memory=False
-
-    Returns:
-    * str: snowflake dtype
     """
     if varchar is True:
         dtype = 'VARCHAR'
@@ -140,22 +124,21 @@ def snowflake_query(sfAccount: str = os.environ.get('sfAccount', None),
                     sfRole: str = os.environ.get('sfRole', None)):
     """Easy Connection To SnowFlake When Environs are set"""
     sf = Snowflake(sfAccount, sfUser, sfPswd, sfWarehouse,
-                       sfDatabase, sfSchema, sfRole)
+                   sfDatabase, sfSchema, sfRole)
     return sf
 
 # %% ../../nbs/00_Data_Utils.ipynb 12
 def query_feature_sets_to_adls_parquet_sf_fs(
-    sf_connection,
-    sf_query:str,
-    azure_account: str,
-    azure_container: str,
-    data_lake_path: str,
-    query_file_path: str,
-    data_lake_sas_token: str, # os.environ["DATALAKE_SAS_TOKEN_SECRET"]
-    partition_by: str = None,
-    max_file_size: str = "3200000",
-    header: str = "True",
-    over_write: str = "True",
+    sf_connection,  # established snowflake connection
+    sf_query: str,  # sql query desired to be pushed to adls
+    azure_account: str,  # azure acount name
+    azure_container: str,  # azure container name to push results to
+    data_lake_path: str,  # adls file path location to dump files to
+    data_lake_sas_token: str,  # most project use os.environ["DATALAKE_SAS_TOKEN_SECRET"]
+    partition_by: str = None,  # save data in a paritions manner
+    max_file_size: str = "3200000",  # choose the file size you would like to save your parquet files
+    header: str = "True",  # saving with headers or not needs to be a string
+    over_write: str = "True",  # if file(s) exisit this will earse exisiting files
 ):
     # Creating Query to create ADLS Stage for Snowflake
     url = f"azure://{azure_account}.blob.core.windows.net/{azure_container}/{data_lake_path}"
@@ -174,14 +157,16 @@ def query_feature_sets_to_adls_parquet_sf_fs(
     logging.info(f"data has been delivered from sf to adls")
 
 # %% ../../nbs/00_Data_Utils.ipynb 14
-def pull_features_from_snowflake(feature_dict: dict,
-                                 udf_inputs: dict,
-                                 filepath_to_grain_list_query: str = None,
-                                 sf_database: str = 'MACHINELEARNINGFEATURES',
-                                 sf_schema: str = 'PROD',
-                                 feature_table_join: str = None,
-                                 extra_statement: str = None,
-                                 experiment_name:str = 'BASELINE'):
+def pull_features_from_snowflake(
+    feature_dict: dict,
+    udf_inputs: dict,
+    filepath_to_grain_list_query: str = None,
+    sf_database: str = 'MACHINELEARNINGFEATURES',
+    sf_schema: str = 'PROD',
+    feature_table_join: str = None,
+    extra_statement: str = None,
+    experiment_name: str = 'BASELINE'
+):
     """
     a function to allow a user dynamically create snowflake queries that
     creates a feature set that will be transformed into inputs that are
@@ -211,7 +196,7 @@ def pull_features_from_snowflake(feature_dict: dict,
     Returns:
         str: mainpulated string query ready to be sent to snowflake
     """
-    static_features = {k: v for k, v in feature_dict.items() if "STATIC" in v.values() 
+    static_features = {k: v for k, v in feature_dict.items() if "STATIC" in v.values()
                        if experiment_name in v['experiment_list']}
     temporal_features = {k: v for k, v in feature_dict.items() if "TEMP" in v.values()
                          if experiment_name in v['experiment_list']}
@@ -282,7 +267,7 @@ def select_multi_input_udfs(feature_dict: dict,
                             sf_database: str,
                             sf_schema: str,
                             iteration: int,
-                            exp_name:str):
+                            exp_name: str):
     """
     utility function called by ``pull_features_from_snowflake``
     to create multi input snowflake udf calls `UDF_NAME(Input 1, Input 2)`

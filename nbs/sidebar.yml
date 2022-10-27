@@ -2,8 +2,19 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_Data_Preperation_Example.ipynb
-      - 00_Data_Utils.ipynb
-      - 00a_Data_Creation.ipynb
-      - 01a_Models.ipynb
-      - 01b_Model_Utilities.ipynb
+      - section: Tutorials
+        contents:
+        - 00_Data_Preperation_Example.ipynb
+        - 01_Modeling_Example.ipynb
+
+      - section: Library Scripts
+        contents:
+        - 00a_Data_Creation_Script.ipynb
+        - 01c_Modeling_Script.ipynb
+
+      - section: Library Functions
+        contents:
+          - 00_Data_Utils.ipynb
+          - 01a_Model_Utilities.ipynb
+          - 01b_Models.ipynb
+          - 01a_Model_Utilities_Custom.ipynb

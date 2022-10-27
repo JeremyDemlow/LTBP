@@ -6,29 +6,23 @@ __all__ = ['data_creation']
 # %% ../../nbs/00a_Data_Creation_Script.ipynb 2
 from fastcore.script import Param, call_parse
 
-from data_system_utilities.snowflake.query import Snowflake
 from data_system_utilities.azure.storage import FileHandling
-from data_system_utilities.snowflake.copyinto import sf_to_adls_url_query_generator
 
 from LTBP.data.utils import (
     query_feature_sets_to_adls_parquet_sf_fs, snowflake_query,
     get_yaml_dicts, pull_features_from_snowflake
-    )
-from .. import files
+)
+from LTBP import files
 
 import os
 import logging
-import pandas as pd
-import logging
-import os
 
 # %% ../../nbs/00a_Data_Creation_Script.ipynb 6
 @call_parse
-def data_creation(train_or_inference: Param(help="YAML section to read", type=str, default='TRAINING'), # noqa:
+def data_creation(train_or_inference: Param(help="YAML section to read", type=str, default='TRAINING'),  # noqa:
                   experiment_name: Param(help="YAML section to read", type=str, default='BASELINE'),  # noqa:
-                  experiment: Param(help="YAML section to read", type=str, default='True')):  # noqa:
+                  experiment: Param(help="YAML section to read", type=bool, default=True)):  # noqa:
     """Creates a feature set for a experiment data set or a production level run feature set"""
-    experiment = True if experiment.lower() == 'true' else False
     logging.info(f"This is a {'experiment run' if experiment else 'production run'}")
     logging.info('Loading Yaml Files..')
     features, udf_inputs, etl = get_yaml_dicts(['features.yaml', 'udf_inputs.yaml', 'etl.yaml'])
@@ -38,10 +32,9 @@ def data_creation(train_or_inference: Param(help="YAML section to read", type=st
                                          filepath_to_grain_list_query='./LTBP/files/sql_files/',
                                          experiment_name=experiment_name)
     data_lake_path = os.path.join((os.path.join(etl['data_lake_path'], 'experiments', experiment_name)
-                      if experiment 
-                      else os.path.join(etl['data_lake_path'], 
-                                        os.environ.get('CI_COMMIT_SHA', 'LocalRunTest')))
-                     , train_or_inference.lower()+'_data/')
+                                   if experiment
+                                   else os.path.join(etl['data_lake_path'],
+                                                     os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'))), train_or_inference.lower()+'_data/')
     logging.info(f'Checking {data_lake_path} to either skip creation for experiment or create a production dataset')
     fh = FileHandling(os.environ['DATALAKE_CONN_STR_SECRET'])
 
@@ -54,7 +47,7 @@ def data_creation(train_or_inference: Param(help="YAML section to read", type=st
             query_file_path=os.path.join(files.__path__[0], etl['query_file_path']),
             azure_account=etl["azure_account"],
             azure_container=etl["azure_container"],
-            data_lake_path=data_lake_path, # TODO: Think about experiments versus 
+            data_lake_path=data_lake_path,  # TODO: Think about experiments versus
             partition_by=None,
             data_lake_sas_token=os.environ["DATALAKE_SAS_TOKEN_SECRET"],
         )
