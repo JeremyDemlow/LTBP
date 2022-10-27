@@ -2,7 +2,8 @@
 
 # %% auto 0
 __all__ = ['get_yaml_dicts', 'generate_data_lake_query', 'read_sfQueries_txt_sql_file', 'return_sf_type', 'snowflake_query',
-           'query_feature_sets_to_adls_parquet_sf_fs', 'pull_features_from_snowflake', 'select_multi_input_udfs']
+           'query_feature_sets_to_adls_parquet_sf_fs', 'clean_special_chars', 'select_multi_input_udfs',
+           'pull_features_from_snowflake']
 
 # %% ../../nbs/00_Data_Utils.ipynb 3
 from data_system_utilities.snowflake.query import Snowflake
@@ -11,8 +12,8 @@ from data_system_utilities.file_parsers import yaml
 from machine_learning_utilities.dataset_creation.snowflake import select_static_features, select_additional_features, create_base_query
 
 from fastcore.xtras import is_listy
-from .. import files
 
+import LTBP.files as files
 import os
 import logging
 import sys
@@ -33,7 +34,7 @@ def get_yaml_dicts(
         yaml_dicts.append(yaml_dict)
     return yaml_dicts
 
-# %% ../../nbs/00_Data_Utils.ipynb 6
+# %% ../../nbs/00_Data_Utils.ipynb 7
 def generate_data_lake_query(
     stage_name: str,  # name of the sf stage to be created is just a file location pointer
     stage_path: str,  # adls file path location to start the stage location
@@ -78,7 +79,7 @@ def generate_data_lake_query(
     query = query.replace("FEATURES_HERE", "")
     return query
 
-# %% ../../nbs/00_Data_Utils.ipynb 9
+# %% ../../nbs/00_Data_Utils.ipynb 10
 def read_sfQueries_txt_sql_file(
     file_name: str  # sql file name to read
 ):
@@ -88,7 +89,7 @@ def read_sfQueries_txt_sql_file(
         f.close()
     return read_data
 
-# %% ../../nbs/00_Data_Utils.ipynb 10
+# %% ../../nbs/00_Data_Utils.ipynb 11
 def return_sf_type(
     dtype: str,  # data type from a df in string form
     varchar: bool = True  # to default all variables to VARCHAR
@@ -114,7 +115,7 @@ def return_sf_type(
         sys.exit()
     return dtype
 
-# %% ../../nbs/00_Data_Utils.ipynb 11
+# %% ../../nbs/00_Data_Utils.ipynb 12
 def snowflake_query(sfAccount: str = os.environ.get('sfAccount', None),
                     sfUser: str = os.environ.get('sfUser', None),
                     sfPswd: str = os.environ.get('sfPswd', None),
@@ -127,7 +128,7 @@ def snowflake_query(sfAccount: str = os.environ.get('sfAccount', None),
                    sfDatabase, sfSchema, sfRole)
     return sf
 
-# %% ../../nbs/00_Data_Utils.ipynb 12
+# %% ../../nbs/00_Data_Utils.ipynb 13
 def query_feature_sets_to_adls_parquet_sf_fs(
     sf_connection,  # established snowflake connection
     sf_query: str,  # sql query desired to be pushed to adls
@@ -157,6 +158,80 @@ def query_feature_sets_to_adls_parquet_sf_fs(
     logging.info(f"data has been delivered from sf to adls")
 
 # %% ../../nbs/00_Data_Utils.ipynb 14
+def clean_special_chars(text):
+    """
+    small nlp clean up tool to take odd characters that could be
+    in vendor data inside of column names and then replaces empty
+    spaces with ``_``
+
+    Args:
+    * text (str): dataframe column names as strings
+
+    Returns:
+    * str: clean column name
+    """
+    punct = "/-'?!.,#$%\'()*+-/:;<=>@[\\]^`{|}~" + '""“”’' + '∞θ÷α•à−β∅³π‘₹´°£€\×™√²—–&'  # noqa:
+    punct += '©^®` <→°€™› ♥←×§″′Â█½à…“★”–●â►−¢²¬░¶↑±¿▾═¦║―¥▓—‹─▒：¼⊕▼▪†■’▀¨▄♫☆é¯♦¤▲è¸¾Ã⋅‘∞∙）↓、│（»，♪╩╚³・╦╣╔╗▬❤ïØ¹≤‡√'  # noqa:
+    for p in punct:
+        text = text.replace(p, '')
+        text = text.replace(' ', '')
+    return text
+
+
+# %% ../../nbs/00_Data_Utils.ipynb 15
+def select_multi_input_udfs(feature_dict: dict,
+                            udf_inputs: dict,
+                            query: str,
+                            sf_database: str,
+                            sf_schema: str,
+                            iteration: int,
+                            exp_name: str):
+    """
+    utility function called by `pull_features_from_snowflake`
+    to create multi input snowflake udf calls UDF_NAME(Input 1, Input 2)
+    a common example is at the ecid grain ISEPICMIXACTIVATED(ECID, 20201001, 20211001)
+
+    Args:
+        feature_dict (dict): multi key dictionary of features with
+            information the function will end up using to create a dynamic call
+        udf_inputs (dict): all information needed for the udf inputs to be created.
+        query (str): query string being manipulated
+        sf_database (str): snowflake database the udfs live in
+        sf_schema (str): snowflake schema the udfs live in
+        iteration (int): iteration give the function the ability to know what inputs
+            are going to be passed to the udf
+
+    Returns:
+        str: manipulated query string
+    """
+    i = 1
+    udf_grain = ', '.join([str(v) for v in udf_inputs['UDF_GRAIN']])
+    udf_location = f'{sf_database}.{sf_schema}'
+    for temp_feat in feature_dict.keys():
+        i += 1
+        feat_dict = feature_dict[temp_feat]
+        input_def = udf_inputs[feat_dict['input_definition']][exp_name][feat_dict['input_type']][iteration]
+        input_def = [input_def] if not isinstance(input_def, list) else input_def
+        inputs = ', '.join([str(v) for v in input_def])
+        inputs = ', ' + inputs if len(inputs) > 0 else inputs
+        result = ''
+        if 'iterable_inputs' in feat_dict.keys():
+            for iter_idx, iter_input in enumerate(feat_dict['iterable_inputs']):
+                if iter_idx + 1 < len(feat_dict['iterable_inputs']):
+                    result += f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}, {iter_input}) as {temp_feat}_{clean_special_chars(iter_input)}\n"
+                else:
+                    result += f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}, {iter_input}) as {temp_feat}_{clean_special_chars(iter_input)}\n"
+        else:
+            if i > len(feature_dict.keys()):
+                result = f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}) as {temp_feat}\n"
+            else:
+                result = f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}) as {temp_feat}"
+        query = query.replace('<FEATURES>', result + '<FEATURES>')
+
+    query = query.replace('<FEATURES>', '')
+    return query
+
+# %% ../../nbs/00_Data_Utils.ipynb 17
 def pull_features_from_snowflake(
     feature_dict: dict,
     udf_inputs: dict,
@@ -259,56 +334,3 @@ def pull_features_from_snowflake(
 
     logging.info(f'final query output: \n {final_query}')
     return final_query
-
-# %% ../../nbs/00_Data_Utils.ipynb 16
-def select_multi_input_udfs(feature_dict: dict,
-                            udf_inputs: dict,
-                            query: str,
-                            sf_database: str,
-                            sf_schema: str,
-                            iteration: int,
-                            exp_name: str):
-    """
-    utility function called by ``pull_features_from_snowflake``
-    to create multi input snowflake udf calls `UDF_NAME(Input 1, Input 2)`
-    a common example is at the ecid grain `ISEPICMIXACTIVATED(ECID, 20201001, 20211001)`
-
-    Args:
-        feature_dict (dict): multi key dictionary of features with
-            information the function will end up using to create a dynamic call
-        udf_inputs (dict): all information needed for the udf inputs to be created.
-        query (str): query string being manipulated
-        sf_database (str): snowflake database the udfs live in
-        sf_schema (str): snowflake schema the udfs live in
-        iteration (int): iteration give the function the ability to know what inputs
-            are going to be passed to the udf
-
-    Returns:
-        str: manipulated query string
-    """
-    i = 1
-    udf_grain = ', '.join([str(v) for v in udf_inputs['UDF_GRAIN']])
-    udf_location = f'{sf_database}.{sf_schema}'
-    for temp_feat in feature_dict.keys():
-        i += 1
-        feat_dict = feature_dict[temp_feat]
-        input_def = udf_inputs[feat_dict['input_definition']][exp_name][feat_dict['input_type']][iteration]
-        input_def = [input_def] if not isinstance(input_def, list) else input_def
-        inputs = ', '.join([str(v) for v in input_def])
-        inputs = ', ' + inputs if len(inputs) > 0 else inputs
-        result = ''
-        if 'iterable_inputs' in feat_dict.keys():
-            for iter_idx, iter_input in enumerate(feat_dict['iterable_inputs']):
-                if iter_idx + 1 < len(feat_dict['iterable_inputs']):
-                    result += f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}, {iter_input}) as {temp_feat}_{clean_special_chars(iter_input)}\n"
-                else:
-                    result += f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}, {iter_input}) as {temp_feat}_{clean_special_chars(iter_input)}\n"
-        else:
-            if i > len(feature_dict.keys()):
-                result = f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}) as {temp_feat}\n"
-            else:
-                result = f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}) as {temp_feat}"
-        query = query.replace('<FEATURES>', result + '<FEATURES>')
-
-    query = query.replace('<FEATURES>', '')
-    return query

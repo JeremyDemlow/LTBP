@@ -12,8 +12,8 @@ from LTBP.data.utils import (
     query_feature_sets_to_adls_parquet_sf_fs, snowflake_query,
     get_yaml_dicts, pull_features_from_snowflake
 )
-from LTBP import files
 
+import LTBP as files
 import os
 import logging
 
