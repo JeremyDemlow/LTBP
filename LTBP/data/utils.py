@@ -2,12 +2,13 @@
 
 # %% auto 0
 __all__ = ['get_yaml_dicts', 'generate_data_lake_query', 'read_sfQueries_txt_sql_file', 'return_sf_type', 'snowflake_query',
-           'query_feature_sets_to_adls_parquet_sf_fs']
+           'query_feature_sets_to_adls_parquet_sf_fs', 'pull_features_from_snowflake', 'select_multi_input_udfs']
 
 # %% ../../nbs/00_Data_Utils.ipynb 3
 from data_system_utilities.snowflake.query import Snowflake
 from data_system_utilities.snowflake.copyinto import sf_to_adls_url_query_generator
 from data_system_utilities.file_parsers import yaml
+from machine_learning_utilities.dataset_creation.snowflake import select_static_features, select_additional_features, create_base_query
 
 from fastcore.xtras import is_listy 
 from .. import files
@@ -171,3 +172,158 @@ def query_feature_sets_to_adls_parquet_sf_fs(
     # Execute
     _ = sf_connection.run_sql_str(sf_to_adls_query)
     logging.info(f"data has been delivered from sf to adls")
+
+# %% ../../nbs/00_Data_Utils.ipynb 14
+def pull_features_from_snowflake(feature_dict: dict,
+                                 udf_inputs: dict,
+                                 filepath_to_grain_list_query: str = None,
+                                 sf_database: str = 'MACHINELEARNINGFEATURES',
+                                 sf_schema: str = 'PROD',
+                                 feature_table_join: str = None,
+                                 extra_statement: str = None,
+                                 experiment_name:str = 'BASELINE'):
+    """
+    a function to allow a user dynamically create snowflake queries that
+    creates a feature set that will be transformed into inputs that are
+    suitable for ML like task. this function starts with a pre-determined list
+    that will define a grain (most commonly used at the ECID grain) that will
+    dynamically call snowflake sql udf(s) and possibliy join a table that has
+    static like features that will create a dataset.
+
+    To have more understanding of this function and the useability please visit
+    (https://vailresorts.gitlab.io/data-science/machine_learning_utilities/)
+
+    Args:
+        feature_dict (dict): this dictionary will have information on all the features
+            a user is looking to gather in one feature set. Each feature will need a feature_type,
+            input_type, input_definition, and a udf_name.
+        udf_inputs (dict): this dictionary will have all the information needed for non "static"
+            like features that are being created via the joined table. This dictionary will need to have
+            a key UDF_GRAIN, FEATURE, LABEL, BASE_QUERY.
+        filepath_to_grain_list_query (str, optional): file location of sql files to read.
+        sf_database (str, optional): snowflake database UDFs live. Defaults to 'MACHINELEARNINGFEATURES'.
+        sf_schema (str, optional): snowflake schema UDFs live. Defaults to 'PROD'.
+        feature_table_join (str, optional): a table other than the feature store to join to this dynamic
+            call that will have all the static features needed to complete the feature set note the table alias
+            on the join statment must be joined. Defaults to None.
+        extra_statement (str, optional): allows for additional sql statements i.e LIMIT 1000. Defaults to None.
+
+    Returns:
+        str: mainpulated string query ready to be sent to snowflake
+    """
+    static_features = {k: v for k, v in feature_dict.items() if "STATIC" in v.values() 
+                       if experiment_name in v['experiment_list']}
+    temporal_features = {k: v for k, v in feature_dict.items() if "TEMP" in v.values()
+                         if experiment_name in v['experiment_list']}
+    logging.info(f'static features in data set: \n {list(static_features.keys())}')
+    logging.info(f'temporal features in data set: \n {list(temporal_features.keys())}')
+    query_structure = """select
+    <MODEL_GRAIN>
+    <FEATURES>
+    <ADDITIONAL_COLUMNS>
+    from
+        (base_query) base
+    """.replace(" ", "")
+
+    # Bring In all Information From Base Query
+    base_query = query_structure.replace("<MODEL_GRAIN>", "base.*")
+    if feature_table_join is None:
+        join_feat_table = "inner join machinelearningfeatures.prod.featurestore_ecid joined on joined.ecid = base.ecid"
+    else:
+        join_feat_table = feature_table_join
+    base_query = base_query + join_feat_table if len(static_features) > 0 else base_query
+
+    # functional call
+    if len(static_features) > 0:
+        base_query = select_static_features(feature_dict=static_features,
+                                            query=base_query)
+        logging.info(f"Finished appending static features")
+
+    final_query = ''
+    for i in range(len(udf_inputs['BASE_QUERY'][experiment_name].keys())):
+        # functional call
+        logging.info(f'reading {udf_inputs["BASE_QUERY"][experiment_name][i]} for base query...')
+        feature_query = create_base_query(
+            file_path=os.path.join(filepath_to_grain_list_query, udf_inputs["BASE_QUERY"][experiment_name][i]),
+            query=base_query)
+
+        # functional call
+        if len(temporal_features) > 0:
+            feature_query = select_multi_input_udfs(feature_dict=temporal_features,
+                                                    udf_inputs=udf_inputs,
+                                                    query=feature_query,
+                                                    sf_database=sf_database,
+                                                    sf_schema=sf_schema,
+                                                    iteration=i,
+                                                    exp_name=experiment_name)
+
+        # functional call
+        if 'ADDITIONAL_COLUMNS' in udf_inputs:
+            feature_query = select_additional_features(feature_dict=udf_inputs['ADDITIONAL_COLUMNS'],
+                                                       query=feature_query,
+                                                       iteration=i)
+        else:
+            feature_query = feature_query.replace('<ADDITIONAL_COLUMNS>', '')
+
+        if i + 1 < len(udf_inputs['BASE_QUERY'][experiment_name].keys()):
+            feature_query += " \nUNION ALL\n"
+        final_query += feature_query
+
+    if extra_statement is not None:
+        final_query += f'\n{extra_statement}'
+
+    logging.info(f'final query output: \n {final_query}')
+    return final_query
+
+# %% ../../nbs/00_Data_Utils.ipynb 16
+def select_multi_input_udfs(feature_dict: dict,
+                            udf_inputs: dict,
+                            query: str,
+                            sf_database: str,
+                            sf_schema: str,
+                            iteration: int,
+                            exp_name:str):
+    """
+    utility function called by ``pull_features_from_snowflake``
+    to create multi input snowflake udf calls `UDF_NAME(Input 1, Input 2)`
+    a common example is at the ecid grain `ISEPICMIXACTIVATED(ECID, 20201001, 20211001)`
+
+    Args:
+        feature_dict (dict): multi key dictionary of features with
+            information the function will end up using to create a dynamic call
+        udf_inputs (dict): all information needed for the udf inputs to be created.
+        query (str): query string being manipulated
+        sf_database (str): snowflake database the udfs live in
+        sf_schema (str): snowflake schema the udfs live in
+        iteration (int): iteration give the function the ability to know what inputs
+            are going to be passed to the udf
+
+    Returns:
+        str: manipulated query string
+    """
+    i = 1
+    udf_grain = ', '.join([str(v) for v in udf_inputs['UDF_GRAIN']])
+    udf_location = f'{sf_database}.{sf_schema}'
+    for temp_feat in feature_dict.keys():
+        i += 1
+        feat_dict = feature_dict[temp_feat]
+        input_def = udf_inputs[feat_dict['input_definition']][exp_name][feat_dict['input_type']][iteration]
+        input_def = [input_def] if not isinstance(input_def, list) else input_def
+        inputs = ', '.join([str(v) for v in input_def])
+        inputs = ', ' + inputs if len(inputs) > 0 else inputs
+        result = ''
+        if 'iterable_inputs' in feat_dict.keys():
+            for iter_idx, iter_input in enumerate(feat_dict['iterable_inputs']):
+                if iter_idx + 1 < len(feat_dict['iterable_inputs']):
+                    result += f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}, {iter_input}) as {temp_feat}_{clean_special_chars(iter_input)}\n"
+                else:
+                    result += f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}, {iter_input}) as {temp_feat}_{clean_special_chars(iter_input)}\n"
+        else:
+            if i > len(feature_dict.keys()):
+                result = f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}) as {temp_feat}\n"
+            else:
+                result = f", {udf_location}.{feat_dict['udf_name']}({udf_grain}{inputs}) as {temp_feat}"
+        query = query.replace('<FEATURES>', result + '<FEATURES>')
+
+    query = query.replace('<FEATURES>', '')
+    return query

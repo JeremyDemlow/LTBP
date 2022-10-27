@@ -1,8 +1,11 @@
+FY_folder: FY23
 azure_account: vaildtscadls
 azure_container: vailadls
 data_lake_path: projects/LTBP/FY23/
-exp_name: status_quo/
+extra_statement:
+  INFERENCE: null
+  TRAINING: null
 max_file_size: '32000000'
 over_write: 'True'
-query_file_location: sql_files/
-stage_name: resortvisitation
+query_file_path: sql_files/
+stage_name: ltbp
