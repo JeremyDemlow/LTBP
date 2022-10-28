@@ -9,11 +9,10 @@ from fastcore.script import Param, call_parse
 from data_system_utilities.azure.storage import FileHandling
 
 from LTBP.data.utils import (
-    query_feature_sets_to_adls_parquet_sf_fs, snowflake_query,
+    query_feature_sets_to_adls_parquet_sf_fs, snowflake_query, 
     get_yaml_dicts, pull_features_from_snowflake
 )
 
-import LTBP as files
 import os
 import logging
 
@@ -35,6 +34,7 @@ def data_creation(train_or_inference: Param(help="YAML section to read", type=st
                                    if experiment
                                    else os.path.join(etl['data_lake_path'],
                                                      os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'))), train_or_inference.lower()+'_data/')
+    logging.info(f'Data lake path for data push {data_lake_path}')
     logging.info(f'Checking {data_lake_path} to either skip creation for experiment or create a production dataset')
     fh = FileHandling(os.environ['DATALAKE_CONN_STR_SECRET'])
 
@@ -44,7 +44,6 @@ def data_creation(train_or_inference: Param(help="YAML section to read", type=st
         query_feature_sets_to_adls_parquet_sf_fs(
             sf_connection=sf,
             sf_query=query,
-            query_file_path=os.path.join(files.__path__[0], etl['query_file_path']),
             azure_account=etl["azure_account"],
             azure_container=etl["azure_container"],
             data_lake_path=data_lake_path,  # TODO: Think about experiments versus
