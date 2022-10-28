@@ -9,26 +9,38 @@ Project Overview
 pip install LTBP
 ```
 
+> coming soon private github pypi token to allow for easy install
+
 ## LTBP Use Cases
 
-### Where results of LTR lives:
+In 2023/24 this project plans on being the replacement to LTR, which
+historically was used to help subpress media dollar spend for guest
+segments.
 
-**Current Fiscal Season Results:** Development Results:
-MachineLearningOutPuts.DEV.LTBP_PREDICTIONS
+The details of this use case will be filled out as the 22/23 winter
+season rolls through as we gear up for another year of pass sales.
+
+## LTBP Result Overview
+
+Current Fiscal Season Results:
+
+Development Results:
+
+- MACHINLEARNINGOUTPUTS.DEV.LTBP_PREDICTIONS
 
 > Note: Development results will be something that we move around as
 > more scale begins to happen, but that isn’t solved as of now.
 
-Development Results: MachineLearningOutPuts.LTBP.LTBP_PREDICTIONS
+Production Snowflake Table:
+
+- MACHINLEARNINGOUTPUTS.LTBP.LTBP_PREDICTIONS
+
+Total Predictions:
+
+<!-- {{total_preds}} -->
 
 ``` python
-from LTBP.data.utils import snowflake_query
-
-sf = snowflake_query()
-
-display(sf.run_sql_str("SELECT COUNT(1) AS TOTAL_POP FROM MachineLearningOutPuts.LTBP.LTBP_PREDICTIONS"))
-
-display(sf.run_sql_str("SELECT TOP 10 * FROM MachineLearningOutPuts.LTBP.LTBP_PREDICTIONS"))
+total_preds
 ```
 
 <div>
@@ -61,8 +73,13 @@ display(sf.run_sql_str("SELECT TOP 10 * FROM MachineLearningOutPuts.LTBP.LTBP_PR
 </table>
 </div>
 
-    /Users/jeremydemlow/miniforge3/envs/ltbp/lib/python3.9/site-packages/data_system_utilities/snowflake/query.py:73: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
-      df = pd.read_sql_query(query, connection)
+Example of Prediction Table Output:
+
+<!-- {{example_output}} -->
+
+``` python
+example_output
+```
 
 <div>
 <style scoped>
@@ -141,46 +158,25 @@ display(sf.run_sql_str("SELECT TOP 10 * FROM MachineLearningOutPuts.LTBP.LTBP_PR
 </table>
 </div>
 
-The output of LTBP_PREDICTIONS Table
-
-**Schema:**
+Schema:
 
 | Variable Name | Description                                                                  |
 |:--------------|:-----------------------------------------------------------------------------|
 | ECID          | Customer Key                                                                 |
 | PROBABILITY   | The estimated probability that this ECID will buy a Pass in this Fiscal Year |
 
-**Label Logic:**
+Label Logic:
 
 LTBP is composed of five bins low, low-med, medium, med-high high. In
 the past, there was an attempt to optimize the return rate to be heavy
 in low, but for simplicity and scalability of this project, DSDE decided
 to use NTILE, which creates equal buckets for the five labeled groups.
 
-``` python
-display(sf.run_sql_str("""
-SELECT 
-LikelihoodToBuyPassLabel,
-COUNT(1) as Total
-FROM (
-SELECT ECID
-, PROBABILITY
-, ntile(5) over (ORDER BY PROBABILITY) as ntile_5
-, CASE WHEN ntile_5 = 5 THEN 'High'
-  WHEN ntile_5 = 4 THEN 'Med-High'
-  WHEN ntile_5 = 3 THEN 'Medium'
-  WHEN ntile_5 = 2 THEN 'Low-Med'
-  WHEN ntile_5 = 1 THEN 'Low'
-  END AS LikelihoodToBuyPassLabel
-FROM MACHINELEARNINGOUTPUTS.ltbp.ltbp_PREDICTIONS ltbp
-ORDER BY PROBABILITY DESC
-)
-GROUP BY LikelihoodToBuyPassLabel
-"""))
-```
+<!-- {{NTILE_breakdown}} -->
 
-    /Users/jeremydemlow/miniforge3/envs/ltbp/lib/python3.9/site-packages/data_system_utilities/snowflake/query.py:73: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
-      df = pd.read_sql_query(query, connection)
+``` python
+NTILE_breakdown
+```
 
 <div>
 <style scoped>
@@ -234,24 +230,12 @@ GROUP BY LikelihoodToBuyPassLabel
 </table>
 </div>
 
-``` python
-display(sf.run_sql_str("""SELECT ECID
-, PROBABILITY
-, ntile(5) over (ORDER BY PROBABILITY) as ntile_5
-, CASE WHEN ntile_5 = 5 THEN 'High'
-  WHEN ntile_5 = 4 THEN 'Med-High'
-  WHEN ntile_5 = 3 THEN 'Medium'
-  WHEN ntile_5 = 2 THEN 'Low-Med'
-  WHEN ntile_5 = 1 THEN 'Low'
-  END AS LikelihoodToBuyPassLabel
-FROM MACHINELEARNINGOUTPUTS.ltbp.ltbp_PREDICTIONS ltbp
-ORDER BY PROBABILITY DESC
-LIMIT 10
-"""))
-```
+Example of what the output looks like with ntile(s) assoicated with the
+raw probability output <!-- {{example_of_ntile}} -->
 
-    /Users/jeremydemlow/miniforge3/envs/ltbp/lib/python3.9/site-packages/data_system_utilities/snowflake/query.py:73: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
-      df = pd.read_sql_query(query, connection)
+``` python
+example_of_ntile
+```
 
 <div>
 <style scoped>
@@ -351,3 +335,103 @@ LIMIT 10
   </tbody>
 </table>
 </div>
+
+**Current Season 2022/23 Results**
+<!-- **Current Season {{season_year}} Results** -->
+<!-- {{current_season_results}} -->
+
+``` python
+current_season_results
+```
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>LIKELIHOODTOBUYPASSLABEL</th>
+      <th>RECORDS</th>
+      <th>FY22_PASSHOLDER</th>
+      <th>NOPASSPURCHASE</th>
+      <th>FY22CONVERSIONRATE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>High</td>
+      <td>2951970</td>
+      <td>1108113</td>
+      <td>1843857</td>
+      <td>0.375381</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Med-High</td>
+      <td>2951970</td>
+      <td>69263</td>
+      <td>2882707</td>
+      <td>0.023463</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Medium</td>
+      <td>2951970</td>
+      <td>30164</td>
+      <td>2921806</td>
+      <td>0.010218</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Low-Med</td>
+      <td>2951971</td>
+      <td>24155</td>
+      <td>2927816</td>
+      <td>0.008183</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Low</td>
+      <td>2951971</td>
+      <td>12742</td>
+      <td>2939229</td>
+      <td>0.004316</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+## Model Specifics
+
+Description of LTBP Production Model:
+
+<!-- - {{models_dict[experiment_name]['description']}} -->
+
+``` python
+models_dict[experiment_name]['description']
+```
+
+    'Standard baseline xgb_hyperopt approach status quo of LTBP of the past'
+
+Model Name in side of LTBP Repo:
+
+<!-- - {{models_dict[experiment_name]['model_trainer']}} -->
+
+``` python
+models_dict[experiment_name]['model_trainer']
+```
+
+    'train_xgb'
