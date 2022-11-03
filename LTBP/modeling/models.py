@@ -128,7 +128,7 @@ def train_xgb(X_train,
               train=1000000,
               early_stop=10,
               verbose=False,
-              **kwargs):
+              **args):
     """
     Binary Classifiation Xgboost DSDE hyper opt approach this should be
     reviewed and customized for your use case.
@@ -166,7 +166,7 @@ def train_xgb(X_train,
     return model
 
 # %% ../../nbs/01b_Models.ipynb 8
-def train_xgb_basic(X_train, X_valid, y_train, y_valid, early_stop=10, verbose=True, *args):
+def train_xgb_basic(X_train, X_valid, y_train, y_valid, early_stop=10, verbose=True, **args):
     """
     Binary Classifiation Xgboost Sklearn API Call Basic HyperParameters
     """

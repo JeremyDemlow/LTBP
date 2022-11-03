@@ -92,8 +92,10 @@ def send_holdout_results_to_sf(sf,
     hold_out_df.to_csv(f"holdout_{experiment_name}{os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')}.csv", index=False)
     adls_path = os.path.join((os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
                               if experiment
-                              else os.path.join(etl_dict['data_lake_path'],
-                                                os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))), 'holdout_results/')
+                              else os.path.join(
+                                  etl_dict['data_lake_path'],
+                                  os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')))
+                             , 'holdout_results/', model_dict[experiment_name]['model_trainer'])+'/'
     logging.info(f'sending prediction file to azure to {adls_path}')
     az = FileHandling(os.environ[model_dict['connection_str']])
     _ = az.upload_file(

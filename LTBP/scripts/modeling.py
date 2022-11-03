@@ -24,21 +24,21 @@ import os
 import logging
 import json
 
-# %% ../../nbs/01c_Modeling_Script.ipynb 7
+# %% ../../nbs/01c_Modeling_Script.ipynb 8
 @call_parse
 def model_train(
     yaml_file_list: Param(help="YAML files to read", type=list, default=['features.yaml', 'udf_inputs.yaml', 'etl.yaml', 'models.yaml']),  # noqa:
     experiment_name: Param(help="YAML section to read", type=str, default='BASELINE'),  # noqa:
     experiment: Param(help="YAML section to read", type=bool, default=True),  # noqa:
     test_set: Param(help="Create a Test Set From Training Data", type=bool, default=True),  # noqa:
-    prod_or_dev: Param(help="dev queries dev schema anything else will query project schema", type=str, default='dev')  # noqa:
+    sfSchema: Param(help="dev queries dev schema anything else will query project schema", type=str, default='dev')  # noqa:
     ):  # noqa:
 
     # Grab all yaml files for current probject
     features, udf_inputs, etl_dict, models_dict = get_yaml_dicts(yaml_file_list)
 
     # Create Snowflake Stage and Query Experiment location or commit location and return training data
-    sf = snowflake_query(sfSchema=prod_or_dev if prod_or_dev.lower() == 'dev' else 'LTBP')
+    sf = snowflake_query(sfSchema='dev' if sfSchema.lower() == 'dev' else sfSchema)
     df = create_stage_and_query_stage_sf(
         sf=sf,
         etl=etl_dict,
@@ -46,14 +46,17 @@ def model_train(
         train_or_inference='TRAINING',
         experiment_name=experiment_name,
         experiment=experiment,
-        indentification=models_dict['idenfication']
+        indentification=models_dict['identification']
     )
 
     # Choosing an adls path depending on experiment being true or false
-    adls_path = os.path.join((os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
-                              if experiment
-                              else os.path.join(etl_dict['data_lake_path'],
-                                                os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))), models_dict['preprocessors_adls_path'])
+    adls_path = os.path.join(
+        (os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
+         if experiment
+         else os.path.join(
+             etl_dict['data_lake_path'],
+             os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))
+         ), models_dict['preprocessors_adls_path'], models_dict['BASELINE']['model_trainer'])
 
     # Grab all Categorical and Continous Variables for Modeling
     cat_vars = [{f.upper(): values['transformation'][experiment_name]} for f, values in features.items()
@@ -90,11 +93,7 @@ def model_train(
                                   as_type=int,
                                   identifiers=['ECID', 'SEASONYEAR']
                                   )
-    if test_set:
-        X_train, X_valid, X_test, y_train, y_valid, y_test, sklearn_pipe, scaler, id_list = result
-    else:
-        X_train, X_valid, y_train, y_valid, sklearn_pipe, scaler, id_list = result
-
+    X_train, X_valid, X_test, y_train, y_valid, y_test, sklearn_pipe, scaler, id_list = result
     # Choosing model from models.py to use from models.yaml file
     model_trainer = getattr(ds_models, models_dict[experiment_name]['model_trainer'])
     model = model_trainer(X_train,
@@ -113,18 +112,18 @@ def model_train(
     result_dict = {}
     logging.info('Training Set Evaluation')
 
-    eval_list_train = evaluate(model, X_train, y_train, y_var, feature_importance=True, plot=True)
+    eval_list_train = evaluate(model, X_train, y_train, y_var, feature_importance=True, plot=False)
     metric1, metric2, metric3, columns, _, _, fi_permutation = eval_list_train
     result_dict['training_metrics'] = {k: v for k, v in zip(columns, [metric1]+[metric2]+[metric3])}
     result_dict['fi_train'] = {k: v for k, v in fi_permutation[:10].values}
     logging.info('Validation Set Evaluation')
-    eval_list_valid = evaluate(model, X_valid, y_valid, y_var, feature_importance=True, plot=True)
+    eval_list_valid = evaluate(model, X_valid, y_valid, y_var, feature_importance=True, plot=False)
     metric1, metric2, metric3, columns, y_pred_proba, y_pred, fi_permutation = eval_list_valid
     result_dict['valid_metrics'] = {k: v for k, v in zip(columns, [metric1]+[metric2]+[metric3])}
     result_dict['fi_valid'] = {k: v for k, v in fi_permutation[:10].values}
     if X_test is not None:
         logging.info('Test Set Evaluation')
-        eval_list_test = evaluate(model, X_test, y_test, y_var, feature_importance=True, plot=True)
+        eval_list_test = evaluate(model, X_test, y_test, y_var, feature_importance=True, plot=False)
         metric1, metric2, metric3, columns, y_pred_proba, y_pred, fi_permutation = eval_list_test
         result_dict['test_metrics'] = {k: v for k, v in zip(columns, [metric1]+[metric2]+[metric3])}
         result_dict['fi_test'] = {k: v for k, v in fi_permutation[:10].values}
@@ -138,10 +137,12 @@ def model_train(
                                etl_dict=etl_dict,
                                model_dict=models_dict)
 
-    adls_path = os.path.join((os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
-                              if experiment
-                              else os.path.join(etl_dict['data_lake_path'],
-                                                os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))))
+    adls_path = os.path.join(
+        (os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
+         if experiment else os.path.join(
+             etl_dict['data_lake_path'], os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))
+         )
+    )
 
     project_log_df = project_log.project_log(
         snowflake_connection=sf,
@@ -157,14 +158,14 @@ def model_train(
     # Saving sklearn pipeline to adls
     logging.info('Saving model and sending it to adls')
     full_pipeline = Pipeline([('preprocessing', pipe), ('classification', model)])
-    adls_path = os.path.join((os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
-                              if experiment
-                              else os.path.join(etl_dict['data_lake_path'],
-                                                os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))), models_dict['modeling_adls_path'])
+    adls_path = os.path.join(adls_path, models_dict['modeling_adls_path'], models_dict['BASELINE']['model_trainer'])
     save_sklearn_object_to_data_lake(
         save_object=full_pipeline,
         adls_path=adls_path,
-        file_name=models_dict[experiment_name]['model_trainer']+os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')+'.pkl',
+        file_name=(models_dict[experiment_name]['model_trainer']
+                   + os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')
+                   + experiment_name+'.pkl'
+                   ),
         container_name=etl_dict['azure_container'],
         connection_str=os.environ[models_dict['connection_str']]
     )

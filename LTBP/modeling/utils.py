@@ -14,7 +14,7 @@ from ..data.utils import snowflake_query, get_yaml_dicts, generate_data_lake_que
 
 from sklearn.model_selection import train_test_split
 
-from rfpimp import *
+from rfpimp import *  # noqa:
 
 import os
 import logging
@@ -88,14 +88,7 @@ def create_sklearn_preprocess_baseline_dict(
 
 # %% ../../nbs/01a_Model_Utilities.ipynb 10
 def return_list_of_vars(variables):
-    """_summary_
-
-    Args:
-        variables (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
+    """returns lists key"""
     if variables is None:
         return None
     vars_list = []
@@ -108,8 +101,8 @@ def return_list_of_vars(variables):
 # %% ../../nbs/01a_Model_Utilities.ipynb 13
 def prepare_training_set(df: pd.DataFrame,
                          y_var: list,
-                         y_scaler_type:object,
-                         sklearn_pipe:object,
+                         y_scaler_type: object,
+                         sklearn_pipe: object,
                          etl_dict: dict,
                          models_dict: dict,
                          adls_path: str,
@@ -243,8 +236,9 @@ def create_stage_and_query_stage_sf(
     udf_inputs: dict,  # template udf input expected format
     train_or_inference: str,  # training or inference
     experiment_name: str,  # name of experiment being ran
-    indentification: list = None,
-    experiment: bool = True
+    indentification: list = ['ECID'],  # list of identification defaults to ECID
+    experiment: bool = True,  # Boolean fed to function from script to say if its an experiment
+    extra_statement: str = None,  # defaults to None to allow for experimentation
 ):
     features, udf_inputs, etl = get_yaml_dicts(['features.yaml', 'udf_inputs.yaml', 'etl.yaml'])
     stage_url = f"""azure://{etl['azure_account']}.blob.core.windows.net/{etl['azure_container']}/{etl['data_lake_path']}{(os.path.join('experiments', experiment_name)
@@ -266,7 +260,7 @@ def create_stage_and_query_stage_sf(
                                                  + os.environ.get('CI_COMMIT_SHA', 'LocalRunTest')),
                                      stage_path=train_or_inference.lower()+'_data/',
                                      columns=indentification + columns,
-                                     extra_statement=None)
+                                     extra_statement=extra_statement)
     logging.info(f'adls snowflake stage query {query}')
     sf = snowflake_query()
     df = sf.run_sql_str(query)

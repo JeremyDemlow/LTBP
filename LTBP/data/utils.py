@@ -39,13 +39,16 @@ def generate_data_lake_query(
     stage_name: str,  # name of the sf stage to be created is just a file location pointer
     stage_path: str,  # adls file path location to start the stage location
     columns: list,  # columns to query parquet files in adls
-    header=True,  # parquet files have headers
+    header: bool = True,  # parquet files have headers
+    dtypes: list = None,  # defaults to Varchar when None else
     extra_statement: str = None  # adding sql statements if desired
 ):
     """
     Given the columns names are provided this query will query out parquet data
     from azure datalake all in varchar this is the basic approach.
     """
+    if dtypes is not None:
+        assert len(dtypes) == len(columns), f'dtypes:\n{dtypes}\ncolumns:\n{columns}\n are differing lengths columns'
     query = f"""
     select
     FEATURES_HERE
@@ -57,29 +60,29 @@ def generate_data_lake_query(
             if ind == 0:
                 query = query.replace(
                     "FEATURES_HERE",
-                    f'$1:"{feature}"::varchar as {feature}\nFEATURES_HERE',
+                    f'$1:"{feature}"::{"varchar" if dtypes is None else dtypes[ind]} as {feature}\nFEATURES_HERE',
                 )
             else:
                 query = query.replace(
                     "FEATURES_HERE",
-                    f', $1:"{feature}"::varchar as {feature}\nFEATURES_HERE',
+                    f', $1:"{feature}"::{"varchar" if dtypes is None else dtypes[ind]} as {feature}\nFEATURES_HERE',
                 )
     else:
         for ind, feature in enumerate(columns):
             if ind == 0:
                 query = query.replace(
                     "FEATURES_HERE",
-                    f'$1:"_COL_{ind}"::varchar as {feature}\nFEATURES_HERE',
+                    f'$1:"_COL_{ind}"::{"varchar" if dtypes is None else dtypes[ind]} as {feature}\nFEATURES_HERE',
                 )
             else:
                 query = query.replace(
                     "FEATURES_HERE",
-                    f', $1:"_COL_{ind}"::varchar as {feature}\nFEATURES_HERE',
+                    f', $1:"_COL_{ind}"::{"varchar" if dtypes is None else dtypes[ind]} as {feature}\nFEATURES_HERE',
                 )
     query = query.replace("FEATURES_HERE", "")
     return query
 
-# %% ../../nbs/00_Data_Utils.ipynb 10
+# %% ../../nbs/00_Data_Utils.ipynb 12
 def read_sfQueries_txt_sql_file(
     file_name: str  # sql file name to read
 ):
@@ -89,7 +92,7 @@ def read_sfQueries_txt_sql_file(
         f.close()
     return read_data
 
-# %% ../../nbs/00_Data_Utils.ipynb 11
+# %% ../../nbs/00_Data_Utils.ipynb 13
 def return_sf_type(
     dtype: str,  # data type from a df in string form
     varchar: bool = True  # to default all variables to VARCHAR
@@ -115,7 +118,7 @@ def return_sf_type(
         sys.exit()
     return dtype
 
-# %% ../../nbs/00_Data_Utils.ipynb 12
+# %% ../../nbs/00_Data_Utils.ipynb 14
 def snowflake_query(sfAccount: str = os.environ.get('sfAccount', None),
                     sfUser: str = os.environ.get('sfUser', None),
                     sfPswd: str = os.environ.get('sfPswd', None),
@@ -128,7 +131,7 @@ def snowflake_query(sfAccount: str = os.environ.get('sfAccount', None),
                    sfDatabase, sfSchema, sfRole)
     return sf
 
-# %% ../../nbs/00_Data_Utils.ipynb 13
+# %% ../../nbs/00_Data_Utils.ipynb 15
 def query_feature_sets_to_adls_parquet_sf_fs(
     sf_connection,  # established snowflake connection
     sf_query: str,  # sql query desired to be pushed to adls
@@ -157,7 +160,7 @@ def query_feature_sets_to_adls_parquet_sf_fs(
     _ = sf_connection.run_sql_str(sf_to_adls_query)
     logging.info(f"data has been delivered from sf to adls")
 
-# %% ../../nbs/00_Data_Utils.ipynb 14
+# %% ../../nbs/00_Data_Utils.ipynb 16
 def clean_special_chars(text):
     """
     small nlp clean up tool to take odd characters that could be
@@ -178,7 +181,7 @@ def clean_special_chars(text):
     return text
 
 
-# %% ../../nbs/00_Data_Utils.ipynb 15
+# %% ../../nbs/00_Data_Utils.ipynb 17
 def select_multi_input_udfs(feature_dict: dict,
                             udf_inputs: dict,
                             query: str,
@@ -231,7 +234,7 @@ def select_multi_input_udfs(feature_dict: dict,
     query = query.replace('<FEATURES>', '')
     return query
 
-# %% ../../nbs/00_Data_Utils.ipynb 17
+# %% ../../nbs/00_Data_Utils.ipynb 19
 def pull_features_from_snowflake(
     feature_dict: dict,
     udf_inputs: dict,

@@ -18,9 +18,12 @@ NOHYPEROPT:
   y_scaler_type: null
 connection_str: DATALAKE_CONN_STR_SECRET
 hold_out_table: LTBP_HOLDOUT_TEST_MODEL_RESULTS
-idenfication:
+identification:
 - ECID
 - SEASONYEAR
+inference_sf_table_name: LTBP_PREDICTIONS_FY23
 modeling_adls_path: modeling/
+predictions_adls_path: predictions/
 preprocessors_adls_path: preprocessors/
+sas_token: DATALAKE_SAS_TOKEN_SECRET
 tracking_table: LTBP_MODEL_TRACKING_FY23
