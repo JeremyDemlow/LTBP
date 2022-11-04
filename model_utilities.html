@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Functions Used In Modeling Efforts">
+
+<title>LTBP - Model Utils</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="LTBP - Model Utils">
+<meta property="og:description" content="Functions Used In Modeling Efforts">
+<meta property="og:site-name" content="LTBP">
+<meta name="twitter:title" content="LTBP - Model Utils">
+<meta name="twitter:description" content="Functions Used In Modeling Efforts">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">LTBP</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Model Utils</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Project Overview</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Tutorials</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_preparation_example.html" class="sidebar-item-text sidebar-link">Data Creation Process</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modeling_example.html" class="sidebar-item-text sidebar-link">Iterate Upon a Model</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./calling_library_cli.html" class="sidebar-item-text sidebar-link">Use Your CLI Commands</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Library Scripts</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_creation_script.html" class="sidebar-item-text sidebar-link">Data Creation Script</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modeling_script.html" class="sidebar-item-text sidebar-link">Modeling Script</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference_script.html" class="sidebar-item-text sidebar-link">Inference Script</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Library Functions</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_utils.html" class="sidebar-item-text sidebar-link">Data Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model_utilities.html" class="sidebar-item-text sidebar-link active">Model Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.html" class="sidebar-item-text sidebar-link">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model_utilities_custom.html" class="sidebar-item-text sidebar-link">Model Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference_utilities.html" class="sidebar-item-text sidebar-link">Inference Utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#return_dict_type" id="toc-return_dict_type" class="nav-link active" data-scroll-target="#return_dict_type">return_dict_type</a></li>
+  <li><a href="#create_sklearn_preprocess_baseline_dict" id="toc-create_sklearn_preprocess_baseline_dict" class="nav-link" data-scroll-target="#create_sklearn_preprocess_baseline_dict">create_sklearn_preprocess_baseline_dict</a></li>
+  <li><a href="#return_list_of_vars" id="toc-return_list_of_vars" class="nav-link" data-scroll-target="#return_list_of_vars">return_list_of_vars</a></li>
+  <li><a href="#prepare_training_set" id="toc-prepare_training_set" class="nav-link" data-scroll-target="#prepare_training_set">prepare_training_set</a></li>
+  <li><a href="#preprocess_data" id="toc-preprocess_data" class="nav-link" data-scroll-target="#preprocess_data">preprocess_data</a></li>
+  <li><a href="#save_sklearn_object_to_data_lake" id="toc-save_sklearn_object_to_data_lake" class="nav-link" data-scroll-target="#save_sklearn_object_to_data_lake">save_sklearn_object_to_data_lake</a></li>
+  <li><a href="#create_stage_and_query_stage_sf" id="toc-create_stage_and_query_stage_sf" class="nav-link" data-scroll-target="#create_stage_and_query_stage_sf">create_stage_and_query_stage_sf</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/JeremyDemlow/LTBP/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Model Utils</h1>
+</div>
+
+<div>
+  <div class="description">
+    Functions Used In Modeling Efforts
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L25" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="return_dict_type" class="level3">
+<h3 class="anchored" data-anchor-id="return_dict_type">return_dict_type</h3>
+<blockquote class="blockquote">
+<pre><code> return_dict_type (pre_process_type:dict)</code></pre>
+</blockquote>
+<p>Simplify the standard process for sklearn preprocessing pipelines</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pre_process_type</td>
+<td>dict</td>
+<td>{k:v} dictionary of columns name and tranformation type</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> data_system_utilities.file_parsers <span class="im">import</span> yaml</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>features<span class="op">=</span>yaml.yaml_reader(<span class="st">'./LTBP/files/yaml_files/features.yaml'</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>experiment_name<span class="op">=</span><span class="st">'BASELINE'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>cat_vars <span class="op">=</span>[{f.lower() : values[<span class="st">'transformation'</span>][experiment_name]} <span class="cf">for</span> f, values <span class="kw">in</span> features.items() </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> values[<span class="st">'var_type'</span>][experiment_name] <span class="op">==</span> <span class="st">'cat'</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            <span class="kw">and</span> values[<span class="st">'input_definition'</span>] <span class="op">!=</span> <span class="st">'LABEL'</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>return_dict_type(cat_vars[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>{'destinationgeoafinitylabel': {'transformation': {'name': 'OrdinalEncoder',
+   'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}},
+  'variable_type': 'cat'}}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L73" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_sklearn_preprocess_baseline_dict" class="level3">
+<h3 class="anchored" data-anchor-id="create_sklearn_preprocess_baseline_dict">create_sklearn_preprocess_baseline_dict</h3>
+<blockquote class="blockquote">
+<pre><code> create_sklearn_preprocess_baseline_dict (cat_vars:list, cont_vars:list)</code></pre>
+</blockquote>
+<p>wrapper around <code>[</code>return_dict_type<code>](https://JeremyDemlow.github.io/LTBP/model_utilities.html#return_dict_type)</code> to go through cat and cont vars</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cat_vars</td>
+<td>list</td>
+<td>list of categorical variables with sklearn transformer</td>
+</tr>
+<tr class="even">
+<td>cont_vars</td>
+<td>list</td>
+<td>list of continous variables with sklearn transformer</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>features<span class="op">=</span>yaml.yaml_reader(<span class="st">'./LTBP/files/yaml_files/features.yaml'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>experiment_name<span class="op">=</span><span class="st">'BASELINE'</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>cat_vars <span class="op">=</span>[{f.lower() : values[<span class="st">'transformation'</span>][experiment_name]} <span class="cf">for</span> f, values <span class="kw">in</span> features.items() </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> values[<span class="st">'var_type'</span>][experiment_name] <span class="op">==</span> <span class="st">'cat'</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">and</span> values[<span class="st">'input_definition'</span>] <span class="op">!=</span> <span class="st">'LABEL'</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>cont_vars <span class="op">=</span>[{f.lower(): values[<span class="st">'transformation'</span>][experiment_name]} <span class="cf">for</span> f, values <span class="kw">in</span> features.items() </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> values[<span class="st">'var_type'</span>][experiment_name] <span class="op">==</span> <span class="st">'cont'</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            <span class="kw">and</span> values[<span class="st">'input_definition'</span>] <span class="op">!=</span> <span class="st">'LABEL'</span>]</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>feature_dict <span class="op">=</span> create_sklearn_preprocess_baseline_dict(cat_vars<span class="op">=</span>cat_vars, </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                                                       cont_vars<span class="op">=</span>cont_vars)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>logging.info(feature_dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:root:{'destinationgeoafinitylabel': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'evercorepass': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'everpass': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'gendercode': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'guestbehavior': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'isepicmixactivated': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'marketingzone': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'mostcommonticketcomp': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'mostsubseasonvisited': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'mostvisitedregion': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'mostvisitedresort': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'onlysingleresortkey': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'partnerresortscannerflag': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'skierabilitylabel': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'totalseasonsscanned': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'visitmostinpeak': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'age': {'transformation': {'name': 'StandardScaler', 'args': {}}, 'variable_type': 'cont'}, 'avgvisitperseason': {'transformation': {'name': 'StandardScaler', 'args': {}}, 'variable_type': 'cont'}, 'resortsvisited': {'transformation': {'name': 'OrdinalEncoder', 'args': {'handle_unknown': 'use_encoded_value', 'unknown_value': -1}}, 'variable_type': 'cat'}, 'subseasonsperyear': {'transformation': {'name': 'StandardScaler', 'args': {}}, 'variable_type': 'cont'}, 'totalvisits': {'transformation': {'name': 'StandardScaler', 'args': {}}, 'variable_type': 'cont'}}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L90" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="return_list_of_vars" class="level3">
+<h3 class="anchored" data-anchor-id="return_list_of_vars">return_list_of_vars</h3>
+<blockquote class="blockquote">
+<pre><code> return_list_of_vars (variables)</code></pre>
+</blockquote>
+<p>returns lists key</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cat_vars <span class="op">=</span> return_list_of_vars(cat_vars)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cont_vars <span class="op">=</span> return_list_of_vars(cont_vars)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>logging.info(<span class="ss">f'categorical variables: </span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>cat_vars<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>logging.info(<span class="ss">f'continous variables: </span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>cont_vars<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:root:categorical variables: 
+ ['destinationgeoafinitylabel', 'evercorepass', 'everpass', 'gendercode', 'guestbehavior', 'isepicmixactivated', 'marketingzone', 'mostcommonticketcomp', 'mostsubseasonvisited', 'mostvisitedregion', 'mostvisitedresort', 'onlysingleresortkey', 'partnerresortscannerflag', 'skierabilitylabel', 'totalseasonsscanned', 'visitmostinpeak']
+INFO:root:continous variables: 
+ ['age', 'avgvisitperseason', 'resortsvisited', 'subseasonsperyear', 'totalvisits']</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L102" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="prepare_training_set" class="level3">
+<h3 class="anchored" data-anchor-id="prepare_training_set">prepare_training_set</h3>
+<blockquote class="blockquote">
+<pre><code> prepare_training_set (df:pandas.core.frame.DataFrame, y_var:list,
+                       y_scaler_type:object, sklearn_pipe:object,
+                       etl_dict:dict, models_dict:dict, adls_path:str,
+                       experiment_name:str, connection_str:str,
+                       identifiers:list=['ECID'], test_set:bool=True,
+                       validation_split:float=0.2, test_split:float=0.15,
+                       seed:int=1320, as_type=&lt;class 'int'&gt;)</code></pre>
+</blockquote>
+<p>TODO: Working on Multi-Col Labels split and preprocess data set for model training purposes</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scaler_type = None</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># test_set=True</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># experiment_name='BASELINE'</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sklearn_pipe=pipe</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># etl=etl</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># models=models</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># adls_path = os.path.join((os.path.join(etl['data_lake_path'], 'experiments', experiment_name)</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     if experiment </span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     else os.path.join(etl_dict['data_lake_path'], </span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')))</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     , models['preprocessors_adls_path'])</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># result = prepare_training_set(df,</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#                               y_var=[k.upper() for k, v in features.items() if v['input_definition'] == 'LABEL'],</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#                               y_scaler_type=models[experiment_name]['y_scaler_type'],</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#                               adls_path=adls_path,</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#                               sklearn_pipe=pipe,</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#                               test_set=True,</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#                               etl_dict=etl,</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                               models_dict=models,</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                               connection_str=os.environ[models["connection_str"]],</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               identifiers=['ECID']</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                               )</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co"># X_train, X_valid, X_test, y_train, y_valid, y_test, sklearn_pipe, scaler, id_list = result</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This one needs a test, but as of right now holding off on this test as this test would take a little big more time than I want to spend on the documentation of this process at the current moment</p>
+<p>The idea of this function is to ensure that the user is using the pre-processor in the correct fashion so that the validation set is not being considered in the pre-processing dictionary</p>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L194" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="preprocess_data" class="level3">
+<h3 class="anchored" data-anchor-id="preprocess_data">preprocess_data</h3>
+<blockquote class="blockquote">
+<pre><code> preprocess_data (X_train, X_valid, X_test, sklearn_pipe)</code></pre>
+</blockquote>
+<p>save_sklearn_object_to_data_lake</p>
+<p>This function is simply wrapping DSU functionality together to allow for a model to be pushed to adls these tests are written and evaluated inside of DSU</p>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L213" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="save_sklearn_object_to_data_lake" class="level3">
+<h3 class="anchored" data-anchor-id="save_sklearn_object_to_data_lake">save_sklearn_object_to_data_lake</h3>
+<blockquote class="blockquote">
+<pre><code> save_sklearn_object_to_data_lake (save_object, file_name, adls_path,
+                                   container_name, connection_str)</code></pre>
+</blockquote>
+<p>moves a sklearn object to azure data lake as a pickle file at a given path</p>
+<p>Will generate a test for this at a later time as LTBP doesn’t need this type of massaging</p>
+<p>The y_var inside of LTBP isn’t a great use case, but RVF where we might want to scale the y_var in regression or time series using MinMaxScaler or StandardScaler this will give the flexibility needed</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> y_var_scaler(y_train, y_valid, y_test, y_var, scaler_type):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Write Doc String"""</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    y_train <span class="op">=</span> scaler_type.fit_transform(y_train.reset_index()[[y_var]])</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    y_train <span class="op">=</span> pd.DataFrame(y_train)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    y_train.columns <span class="op">=</span> [y_var]</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    y_valid <span class="op">=</span> scaler_type.transform(y_valid.reset_index()[[y_var]])</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    y_valid <span class="op">=</span> pd.DataFrame(y_valid)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    y_valid.columns <span class="op">=</span> [y_var]</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    y_test <span class="op">=</span> scaler_type.transform(y_test.reset_index()[[y_var]])</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    y_test <span class="op">=</span> pd.DataFrame(y_test)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    y_test.columns <span class="op">=</span> [y_var]</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y_train, y_valid, y_test, scaler</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/modeling/utils.py#L233" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_stage_and_query_stage_sf" class="level3">
+<h3 class="anchored" data-anchor-id="create_stage_and_query_stage_sf">create_stage_and_query_stage_sf</h3>
+<blockquote class="blockquote">
+<pre><code> create_stage_and_query_stage_sf (sf, features:dict, etl:dict,
+                                  udf_inputs:dict, train_or_inference:str,
+                                  experiment_name:str,
+                                  indentification:list=['ECID'],
+                                  experiment:bool=True,
+                                  extra_statement:str=None)</code></pre>
+</blockquote>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sf</td>
+<td></td>
+<td></td>
+<td>Snowflake connection</td>
+</tr>
+<tr class="even">
+<td>features</td>
+<td>dict</td>
+<td></td>
+<td>template feature input expected format</td>
+</tr>
+<tr class="odd">
+<td>etl</td>
+<td>dict</td>
+<td></td>
+<td>template etl input expected format</td>
+</tr>
+<tr class="even">
+<td>udf_inputs</td>
+<td>dict</td>
+<td></td>
+<td>template udf input expected format</td>
+</tr>
+<tr class="odd">
+<td>train_or_inference</td>
+<td>str</td>
+<td></td>
+<td>training or inference</td>
+</tr>
+<tr class="even">
+<td>experiment_name</td>
+<td>str</td>
+<td></td>
+<td>name of experiment being ran</td>
+</tr>
+<tr class="odd">
+<td>indentification</td>
+<td>list</td>
+<td>[‘ECID’]</td>
+<td>list of identification defaults to ECID</td>
+</tr>
+<tr class="even">
+<td>experiment</td>
+<td>bool</td>
+<td>True</td>
+<td>Boolean fed to function from script to say if its an experiment</td>
+</tr>
+<tr class="odd">
+<td>extra_statement</td>
+<td>str</td>
+<td>None</td>
+<td>defaults to None to allow for experimentation</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> LTBP.data.utils <span class="im">import</span> get_yaml_dicts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>yaml_file_list <span class="op">=</span> [<span class="st">'features.yaml'</span>, <span class="st">'udf_inputs.yaml'</span>, <span class="st">'etl.yaml'</span>, <span class="st">'models.yaml'</span>]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>experiment <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>experiment_name <span class="op">=</span> <span class="st">'BASELINE'</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>indentification <span class="op">=</span> [<span class="st">'ECID'</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>train_or_inference <span class="op">=</span> <span class="st">'INFERENCE'</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>extra_statement<span class="op">=</span><span class="va">None</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>stage_url <span class="op">=</span> <span class="ss">f"""azure://</span><span class="sc">{</span>etl[<span class="st">'azure_account'</span>]<span class="sc">}</span><span class="ss">.blob.core.windows.net/</span><span class="sc">{</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        etl[<span class="st">'azure_container'</span>]<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>etl[<span class="st">'data_lake_path'</span>]<span class="sc">}{</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        (os.path.join(<span class="st">'experiments'</span>, experiment_name)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> experiment <span class="cf">else</span> os.path.join(os.getenv(<span class="st">'CI_COMMIT_SHA'</span>, <span class="st">'LocalRunTest'</span>), experiment_name))<span class="sc">}</span><span class="ss">"""</span>.replace(<span class="st">' '</span>, <span class="st">''</span>)<span class="op">+</span><span class="st">'/'</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>stage_query <span class="op">=</span> make_stage_query_generator(</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        stage_name<span class="op">=</span>etl[<span class="st">"stage_name"</span>] <span class="op">+</span> etl[<span class="st">'FY_folder'</span>] <span class="op">+</span> os.environ.get(<span class="st">'CI_COMMIT_SHA'</span>, <span class="st">'LocalRunTest'</span>),</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        url<span class="op">=</span>stage_url,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        sas_token<span class="op">=</span>os.environ[<span class="st">"DATALAKE_SAS_TOKEN_SECRET"</span>],</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        file_type<span class="op">=</span><span class="st">"parquet"</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>sf <span class="op">=</span> snowflake_query()</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> sf.run_sql_str(stage_query)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Figure out a identification feature like season year</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Udf grain is ECID, which is easy to get, but season year isn't obivous some thought is needed</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>indentification <span class="op">=</span> indentification <span class="cf">if</span> indentification <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> [col.split(<span class="st">'.'</span>)[<span class="op">-</span><span class="dv">1</span>] <span class="cf">for</span> col <span class="kw">in</span> udf_inputs[train_or_inference][<span class="st">'UDF_GRAIN'</span>]]</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [col.upper() <span class="cf">for</span> col <span class="kw">in</span> features.keys()]</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> generate_data_lake_query(stage_name<span class="op">=</span>(etl[<span class="st">"stage_name"</span>]</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>                                             <span class="op">+</span> etl[<span class="st">'FY_folder'</span>]</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>                                             <span class="op">+</span> os.environ.get(<span class="st">'CI_COMMIT_SHA'</span>, <span class="st">'LocalRunTest'</span>)),</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>                                 stage_path<span class="op">=</span>train_or_inference.lower()<span class="op">+</span><span class="st">'_data/'</span>,</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>                                 columns<span class="op">=</span>indentification <span class="op">+</span> columns,</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>                                 extra_statement<span class="op">=</span>extra_statement)</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>logging.info(<span class="ss">f'adls snowflake stage query </span><span class="sc">{</span>query<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> sf.run_sql_str(query)</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>logging.info(<span class="ss">f'Preview dataframe queried </span><span class="sc">{</span>df<span class="sc">.</span>head()<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:data_system_utilities.snowflake.utils:stage_query: 
+ create or replace stage ltbpFY23LocalRunTest
+url='azure://vaildtscadls.blob.core.windows.net/vailadls/projects/LTBP/FY23/LocalRunTest/BASELINE/'
+credentials=(azure_sas_token='**MASKED**')
+encryption=(type= 'NONE')
+file_format = (type = parquet        )
+INFO:data_system_utilities.snowflake.utils:connection to snowflake established...
+INFO:data_system_utilities.snowflake.query:executing query
+INFO:data_system_utilities.snowflake.query:data loaded from snowflake
+INFO:data_system_utilities.snowflake.query:connection to snowflake has been turned off
+INFO:data_system_utilities.snowflake.query:Stage area LTBPFY23LOCALRUNTEST successfully created.
+INFO:root:adls snowflake stage query 
+    select
+    $1:"ECID"::varchar as ECID
+, $1:"AGE"::varchar as AGE
+, $1:"AVGVISITPERSEASON"::varchar as AVGVISITPERSEASON
+, $1:"BOUGHTPASS"::varchar as BOUGHTPASS
+, $1:"DESTINATIONGEOAFINITYLABEL"::varchar as DESTINATIONGEOAFINITYLABEL
+, $1:"EVERCOREPASS"::varchar as EVERCOREPASS
+, $1:"EVERPASS"::varchar as EVERPASS
+, $1:"GENDERCODE"::varchar as GENDERCODE
+, $1:"GUESTBEHAVIOR"::varchar as GUESTBEHAVIOR
+, $1:"ISEPICMIXACTIVATED"::varchar as ISEPICMIXACTIVATED
+, $1:"MARKETINGZONE"::varchar as MARKETINGZONE
+, $1:"MOSTCOMMONTICKETCOMP"::varchar as MOSTCOMMONTICKETCOMP
+, $1:"MOSTSUBSEASONVISITED"::varchar as MOSTSUBSEASONVISITED
+, $1:"MOSTVISITEDREGION"::varchar as MOSTVISITEDREGION
+, $1:"MOSTVISITEDRESORT"::varchar as MOSTVISITEDRESORT
+, $1:"ONLYSINGLERESORTKEY"::varchar as ONLYSINGLERESORTKEY
+, $1:"PARTNERRESORTSCANNERFLAG"::varchar as PARTNERRESORTSCANNERFLAG
+, $1:"RESORTSVISITED"::varchar as RESORTSVISITED
+, $1:"SKIERABILITYLABEL"::varchar as SKIERABILITYLABEL
+, $1:"SUBSEASONSPERYEAR"::varchar as SUBSEASONSPERYEAR
+, $1:"TOTALSEASONSSCANNED"::varchar as TOTALSEASONSSCANNED
+, $1:"TOTALVISITS"::varchar as TOTALVISITS
+, $1:"VISITMOSTINPEAK"::varchar as VISITMOSTINPEAK
+
+    from @ltbpFY23LocalRunTest/inference_data/
+    None
+    
+INFO:data_system_utilities.snowflake.utils:connection to snowflake established...
+INFO:data_system_utilities.snowflake.query:executing query
+INFO:data_system_utilities.snowflake.query:connection to snowflake has been turned off</code></pre>
+</div>
+<div class="cell-output cell-output-error">
+<pre><code>KeyboardInterrupt: </code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="This an example of how to get a feature set developed for a batch model">
+
+<title>LTBP - Data Creation Process</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="LTBP - Data Creation Process">
+<meta property="og:description" content="This an example of how to get a feature set developed for a batch model">
+<meta property="og:site-name" content="LTBP">
+<meta name="twitter:title" content="LTBP - Data Creation Process">
+<meta name="twitter:description" content="This an example of how to get a feature set developed for a batch model">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">LTBP</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Data Creation Process</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Project Overview</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Tutorials</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_preparation_example.html" class="sidebar-item-text sidebar-link active">Data Creation Process</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modeling_example.html" class="sidebar-item-text sidebar-link">Iterate Upon a Model</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./calling_library_cli.html" class="sidebar-item-text sidebar-link">Use Your CLI Commands</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Library Scripts</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_creation_script.html" class="sidebar-item-text sidebar-link">Data Creation Script</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modeling_script.html" class="sidebar-item-text sidebar-link">Modeling Script</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference_script.html" class="sidebar-item-text sidebar-link">Inference Script</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Library Functions</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_utils.html" class="sidebar-item-text sidebar-link">Data Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model_utilities.html" class="sidebar-item-text sidebar-link">Model Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.html" class="sidebar-item-text sidebar-link">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model_utilities_custom.html" class="sidebar-item-text sidebar-link">Model Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference_utilities.html" class="sidebar-item-text sidebar-link">Inference Utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-preperation-steps" id="toc-data-preperation-steps" class="nav-link active" data-scroll-target="#data-preperation-steps">Data Preperation Steps</a>
+  <ul class="collapse">
+  <li><a href="#snowflake-feature-store" id="toc-snowflake-feature-store" class="nav-link" data-scroll-target="#snowflake-feature-store">Snowflake Feature Store</a>
+  <ul class="collapse">
+  <li><a href="#step-1-creating-a-base-query-set-for-your-specific-project." id="toc-step-1-creating-a-base-query-set-for-your-specific-project." class="nav-link" data-scroll-target="#step-1-creating-a-base-query-set-for-your-specific-project."><strong>Step 1</strong>: Creating a base query set for your specific project.</a></li>
+  <li><a href="#step-2-creating-feature-choices-and-udf-inputs" id="toc-step-2-creating-feature-choices-and-udf-inputs" class="nav-link" data-scroll-target="#step-2-creating-feature-choices-and-udf-inputs"><strong>Step 2:</strong> Creating Feature Choices and UDF Inputs</a></li>
+  <li><a href="#step-3-generate-the-query-to-send-to-snowflake" id="toc-step-3-generate-the-query-to-send-to-snowflake" class="nav-link" data-scroll-target="#step-3-generate-the-query-to-send-to-snowflake"><strong>Step 3:</strong> Generate the Query to Send to Snowflake</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#final-remarks" id="toc-final-remarks" class="nav-link" data-scroll-target="#final-remarks">Final Remarks</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/JeremyDemlow/LTBP/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Data Creation Process</h1>
+</div>
+
+<div>
+  <div class="description">
+    This an example of how to get a feature set developed for a batch model
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="data-preperation-steps" class="level1">
+<h1>Data Preperation Steps</h1>
+<section id="snowflake-feature-store" class="level2">
+<h2 class="anchored" data-anchor-id="snowflake-feature-store">Snowflake Feature Store</h2>
+<blockquote class="blockquote">
+<p>Using MSU process</p>
+</blockquote>
+<section id="step-1-creating-a-base-query-set-for-your-specific-project." class="level3">
+<h3 class="anchored" data-anchor-id="step-1-creating-a-base-query-set-for-your-specific-project."><strong>Step 1</strong>: Creating a base query set for your specific project.</h3>
+<p>The idea behind this is that this query allows you to customize the people you want inside of each year of your training data set. So an example of this could the that you want to only build LTBP to have guest that buy passes at all rather than the decision that was made to have guest that scanned in the year.</p>
+<p>There is no right answer for the type of guest you want to put into your model. This could be argued that the guest that were on a ticket that buy a past the next year can be found with this ECID group, but another arguement could be that guest that have pass for the year are a better trend. This experimentation can be solved by using this type of logic.</p>
+<blockquote class="blockquote">
+<p>There are limitations to this base query, but this base query is what we are using to be able to leverage the feature store that is simply just a bunch of UDF calls to snowflake to allow for simple and stable calls to generate feature sets</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This model has been going for a long time we only use 3 years of data but this is a legacy project being moved over</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>season_year<span class="op">=</span>[<span class="st">'2017/18'</span>, <span class="st">'2018/19'</span>, <span class="st">'2019/20'</span>, <span class="st">'2020/21'</span>, <span class="st">'2021/22'</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Changing these to the season end years so that we don't get confused what year the data is for</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>seasons<span class="op">=</span>[<span class="st">'17_18'</span>, <span class="st">'18_19'</span>, <span class="st">'19_20'</span>, <span class="st">'20_21'</span>, <span class="st">'21_22'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sy, s <span class="kw">in</span> <span class="bu">zip</span>(season_year, seasons):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(Path(<span class="st">'./LTBP/files/sql_files/'</span>, <span class="ss">f'training_ecids_</span><span class="sc">{</span>s<span class="sc">}</span><span class="ss">.sql'</span>), <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="ss">f"""select</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ss">distinct fs.ECID as ecid,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ss">dd.SeasonYear as SeasonYear</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ss">from BIDE_EDWDB_ARA_PROD.dbo.FactScan fs</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ss">left join BIDE_EDWDB_ARA_PROD.dbo.DimDateSeason dd</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ss">on dd.DateSeasonKey = fs.DateSeasonKey</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ss">where</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ss">dd.SeasonYear in ('</span><span class="sc">{</span>sy<span class="sc">}</span><span class="ss">')</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ss">and fs.IsEmployee = 0</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ss">and dd.Season = 'Winter'</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ss">LIMIT 10000</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This is just showing a quick example of what happens <strong>pull_features_from_snowflake</strong> the idea is that each one of these grains will be replace and then each season year will then be put together and unioned together to create a full feature set</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> machine_learning_utilities.dataset_creation.snowflake <span class="im">import</span> create_base_query</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"""select</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;MODEL_GRAIN&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;FEATURES&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;ADDITIONAL_COLUMNS&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">    from</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">        (base_query) base</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span>.replace(<span class="st">" "</span>, <span class="st">""</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>season_year <span class="op">=</span> <span class="st">'17_18'</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(create_base_query(file_path<span class="op">=</span><span class="ss">f'./LTBP/files/sql_files/training_ecids_</span><span class="sc">{</span>season_year<span class="sc">}</span><span class="ss">.sql'</span>, query<span class="op">=</span>query))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>select
+&lt;MODEL_GRAIN&gt;
+&lt;FEATURES&gt;
+&lt;ADDITIONAL_COLUMNS&gt;
+from
+(select
+distinct fs.ECID as ecid,
+dd.SeasonYear as SeasonYear
+from BIDE_EDWDB_ARA_PROD.dbo.FactScan fs
+left join BIDE_EDWDB_ARA_PROD.dbo.DimDateSeason dd
+on dd.DateSeasonKey = fs.DateSeasonKey
+where
+dd.SeasonYear in ('2017/18')
+and fs.IsEmployee = 0
+and dd.Season = 'Winter'
+LIMIT 10000
+)base
+</code></pre>
+</div>
+</div>
+<p>Now that we have a base for each year of a training data what we want to make sure we create a query that will pull all eligible guest into a feature set for inference purposes.</p>
+<blockquote class="blockquote">
+<p><strong>NOTE</strong>: You will see a hard coded season year you can replace that with the following command below to always be on the lastest and greatest season year, but there are times in the year where this isn’t correct due to system updates that is why you are seeing a hard coded value in this query below.</p>
+</blockquote>
+<p>(select SalesSeason from (select SalesSeason, row_number() over(order by SalesSeason desc) as rank from (select distinct SalesSeason from BIDE_EDWDB_ARA_PROD.DBO.SalesSeason where SalesSeason &lt;&gt; ‘Reconciliation Placeholder’) ) where rank = 1 )</p>
+<blockquote class="blockquote">
+<p>Also note that this inference query set hasn’t been looked at for more than a year and there are most likely better ways to get our guests than this, but we have been using this and will continue to do this until a track of work is opened to resolve this known possible issue</p>
+</blockquote>
+<p>The inference set can be found at ./LTBP/files/sql_files/inference_base.sql</p>
+</section>
+<section id="step-2-creating-feature-choices-and-udf-inputs" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-creating-feature-choices-and-udf-inputs"><strong>Step 2:</strong> Creating Feature Choices and UDF Inputs</h3>
+<p>Features are going to be udf calls that have been created in the feature store gitlab repo. There are always more and more features available as well as if there are features you want to add please continue to add to the already reach feature store. There are projects that don’t quite work for the feature store for one reason or another and that example will be coming in a future project.</p>
+<p>This feature store project is for the projects that have already been in use for more than 2-3 years now. In future project and processes this might completely go away in fav or a ADLS feature store that has ELT process for each of our models but that is still a little bit down the road</p>
+<p>Please see <a href="https://vailresorts.gitlab.io/data-science/machine_learning_utilities/dataset_creation/examples_snowflake/">MSU Data Set Creation Example</a> for more explanation of udf_dict.</p>
+<section id="explanation-of-feature-yamldictionary" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-of-feature-yamldictionary">Explanation of Feature Yaml/Dictionary</h4>
+<p>You will see some key variables inside of each one of these keys:</p>
+<ol type="1">
+<li><p>feature_type</p>
+<ul>
+<li><p>STATIC: meaning it’s a static udf call from the feature store</p></li>
+<li><p>TEMP: meaning it’s a temporal feature call that is going to need udf inputs</p>
+<ul>
+<li>Note: this will probably need advancement as we go into snowpark so this documentation might need updating for more advance or better written udfs</li>
+</ul></li>
+</ul></li>
+<li><p>input_type</p>
+<ul>
+<li>Needs to have a corresponding key inside of udf_inputs to allow the function to find what it needs to be inserting into the udf call.</li>
+</ul></li>
+<li><p>input_definition</p>
+<ul>
+<li>FEATURE: meaning it will be part of the training feature set unless there is a feature selection process that is happening in modeling, but in this version it does not happen.</li>
+<li>LABEL: meaning this is the dependent variable that is going to be predicted through out the project</li>
+</ul></li>
+<li><p>udf_name</p>
+<ul>
+<li>Feature store udf name</li>
+</ul></li>
+<li><p>var_type</p>
+<ul>
+<li>cat: it tells the function that we want to treat this as a categorical feature</li>
+<li>cont: it tell the function that we want to treat this as a continuous feature</li>
+</ul></li>
+<li><p>transformation</p>
+<ul>
+<li>Sklearn transformation types expected
+<ul>
+<li>Note: that this library does not expect more args that MSU shows an example of because this is a template to get quicker results, but if there is a desire to change the standard process you can change <code>return_dict_type</code> from modeling utils, which is just simplifying process a little which has been nice, but can be voted to be removed if we see fit</li>
+</ul></li>
+</ul></li>
+<li><p>experiment_list</p>
+<ul>
+<li>This is a list of names of experiments being ran that a user wants to have a feature part of the modeling process if the name of the experiment is not in the list the feature will be skipped, which allows a user to run the same model for example with a differing feature set to possibly test something like what collinear feature is better to have than another.</li>
+</ul></li>
+</ol>
+<blockquote class="blockquote">
+<p>Note: If you want to have dtypes for the snowflake stage query in the modeling process you will need to add dtype to all of these features and then write the logic to pull the dtypes in order similar to how columns is created dynamically already inside of <a href="https://JeremyDemlow.github.io/LTBP/model_utilities.html#create_stage_and_query_stage_sf"><code>create_stage_and_query_stage_sf</code></a> where features is just the feature_dict below and make sure they are going to be in order</p>
+</blockquote>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [col.upper() <span class="cf">for</span> col <span class="kw">in</span> features.keys()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>feature_dict <span class="op">=</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'GenderCode'</span>:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'STATIC'</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="va">None</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'GenderCode'</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span> ,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">'DESTINATIONGEOAFINITYLABEL'</span>:</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'STATIC'</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="va">None</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'DESTINATIONGEOAFINITYLABEL'</span>,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Issue with temporal element eventual switch back</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># glv issue spotted and snowpark fixes it</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">'MarketingZone'</span>:</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'STATIC'</span>,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="va">None</span>,</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'MarketingZone'</span>,</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Age'</span>:</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'Age_ECID_Temporal'</span>,</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cont'</span>,</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cont'</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'StandardScaler'</span>,</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'StandardScaler'</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    <span class="st">'EverCorePass'</span>:</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'EverCorePass_ECID_Temporal'</span>,</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>    <span class="st">'EverPass'</span>:</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'EverPass_ECID_Temporal'</span>,</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>    <span class="st">'OnlySingleResortKey'</span>:</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'OnlySingleResortKey_ECID_Temporal'</span>,</span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>    <span class="st">'PartnerResortScannerFlag'</span>:</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'PartnerResortScannerFlag_ECID_Temporal'</span>,</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>    <span class="st">'TotalSeasonsScanned'</span>:</span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'TotalSeasonsScanned_ECID_Temporal'</span>,</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ResortsVisited'</span>:</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'ResortsVisited_ECID_Temporal'</span>,</span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cont'</span>,</span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cont'</span></span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>    <span class="st">'SubSeasonsPerYear'</span>:</span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'SubSeasonsPerYear_ECID_Temporal'</span>,</span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cont'</span>,</span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cont'</span></span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'StandardScaler'</span>,</span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'StandardScaler'</span></span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>    <span class="st">'MostCommonTicketComp'</span>:</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'MostCommonTicketComp_ECID_Temporal'</span>,</span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>    <span class="st">'AvgVisitPerSeason'</span>:</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'AvgVisitPerSeason_ECID_Temporal'</span>,</span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cont'</span>,</span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cont'</span></span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'StandardScaler'</span>,</span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'StandardScaler'</span></span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>    <span class="st">'MostSubSeasonVisited'</span>:</span>
+<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'MostSubSeasonVisited_ECID_Temporal'</span>,</span>
+<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a>    <span class="st">'TotalVisits'</span>:</span>
+<span id="cb7-229"><a href="#cb7-229" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-230"><a href="#cb7-230" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'TotalVisits_ECID_Temporal'</span>,</span>
+<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cont'</span>,</span>
+<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cont'</span></span>
+<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-239"><a href="#cb7-239" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'StandardScaler'</span>,</span>
+<span id="cb7-240"><a href="#cb7-240" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'StandardScaler'</span></span>
+<span id="cb7-241"><a href="#cb7-241" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-242"><a href="#cb7-242" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-243"><a href="#cb7-243" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-244"><a href="#cb7-244" aria-hidden="true" tabindex="-1"></a>    <span class="st">'VisitMostInPeak'</span>:</span>
+<span id="cb7-245"><a href="#cb7-245" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-246"><a href="#cb7-246" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-247"><a href="#cb7-247" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-249"><a href="#cb7-249" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'VisitMostInPeak_ECID_Temporal'</span>,</span>
+<span id="cb7-250"><a href="#cb7-250" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-251"><a href="#cb7-251" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-252"><a href="#cb7-252" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-253"><a href="#cb7-253" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-254"><a href="#cb7-254" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-255"><a href="#cb7-255" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-256"><a href="#cb7-256" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-257"><a href="#cb7-257" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-258"><a href="#cb7-258" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-259"><a href="#cb7-259" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-260"><a href="#cb7-260" aria-hidden="true" tabindex="-1"></a>    <span class="st">'MostVisitedRegion'</span>:</span>
+<span id="cb7-261"><a href="#cb7-261" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-262"><a href="#cb7-262" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-263"><a href="#cb7-263" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-264"><a href="#cb7-264" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-265"><a href="#cb7-265" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'MostVisitedRegion_ECID_Temporal'</span>,</span>
+<span id="cb7-266"><a href="#cb7-266" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-267"><a href="#cb7-267" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-268"><a href="#cb7-268" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-269"><a href="#cb7-269" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-270"><a href="#cb7-270" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a>    <span class="st">'MostVisitedResort'</span>:</span>
+<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'3_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'MostVisitedResort_ECID_Temporal'</span>,</span>
+<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a>    <span class="st">'IsEpicMixActivated'</span>:</span>
+<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-295"><a href="#cb7-295" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'SEASONYEAR'</span>,</span>
+<span id="cb7-296"><a href="#cb7-296" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-297"><a href="#cb7-297" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'IsEpicMixActivated_ECID_Temporal'</span>,</span>
+<span id="cb7-298"><a href="#cb7-298" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-299"><a href="#cb7-299" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-300"><a href="#cb7-300" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-301"><a href="#cb7-301" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-302"><a href="#cb7-302" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-303"><a href="#cb7-303" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-304"><a href="#cb7-304" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-305"><a href="#cb7-305" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-306"><a href="#cb7-306" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-307"><a href="#cb7-307" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-308"><a href="#cb7-308" aria-hidden="true" tabindex="-1"></a>    <span class="st">'MarketingZone'</span>:</span>
+<span id="cb7-309"><a href="#cb7-309" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-310"><a href="#cb7-310" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-311"><a href="#cb7-311" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'SEASONYEAR'</span>,</span>
+<span id="cb7-312"><a href="#cb7-312" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-313"><a href="#cb7-313" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'MarketingZone_ECID_Temporal'</span>,</span>
+<span id="cb7-314"><a href="#cb7-314" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-315"><a href="#cb7-315" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-316"><a href="#cb7-316" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-317"><a href="#cb7-317" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-318"><a href="#cb7-318" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-319"><a href="#cb7-319" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-320"><a href="#cb7-320" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-321"><a href="#cb7-321" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-322"><a href="#cb7-322" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-323"><a href="#cb7-323" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-324"><a href="#cb7-324" aria-hidden="true" tabindex="-1"></a>    <span class="st">'SkierabilityLabel'</span>:</span>
+<span id="cb7-325"><a href="#cb7-325" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-326"><a href="#cb7-326" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-327"><a href="#cb7-327" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'SEASONYEAR'</span>,</span>
+<span id="cb7-328"><a href="#cb7-328" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-329"><a href="#cb7-329" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'SkierabilityLabel_ECID_Temporal'</span>,</span>
+<span id="cb7-330"><a href="#cb7-330" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-331"><a href="#cb7-331" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-332"><a href="#cb7-332" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-333"><a href="#cb7-333" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-334"><a href="#cb7-334" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-335"><a href="#cb7-335" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-336"><a href="#cb7-336" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-337"><a href="#cb7-337" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-338"><a href="#cb7-338" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-339"><a href="#cb7-339" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-340"><a href="#cb7-340" aria-hidden="true" tabindex="-1"></a>    <span class="st">'GuestBehavior'</span>:</span>
+<span id="cb7-341"><a href="#cb7-341" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-342"><a href="#cb7-342" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-343"><a href="#cb7-343" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'SEASONYEAR'</span>,</span>
+<span id="cb7-344"><a href="#cb7-344" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-345"><a href="#cb7-345" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'GuestBehavior_ECID_Temporal'</span>,</span>
+<span id="cb7-346"><a href="#cb7-346" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-347"><a href="#cb7-347" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-348"><a href="#cb7-348" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-349"><a href="#cb7-349" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-350"><a href="#cb7-350" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-351"><a href="#cb7-351" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-352"><a href="#cb7-352" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-353"><a href="#cb7-353" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-354"><a href="#cb7-354" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-355"><a href="#cb7-355" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-356"><a href="#cb7-356" aria-hidden="true" tabindex="-1"></a>    <span class="st">'EverCorePass'</span>:</span>
+<span id="cb7-357"><a href="#cb7-357" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-358"><a href="#cb7-358" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-359"><a href="#cb7-359" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'ORIGIN_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-360"><a href="#cb7-360" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-361"><a href="#cb7-361" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'EverCorePass_ECID_Temporal'</span>,</span>
+<span id="cb7-362"><a href="#cb7-362" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-363"><a href="#cb7-363" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-364"><a href="#cb7-364" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-365"><a href="#cb7-365" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-366"><a href="#cb7-366" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-367"><a href="#cb7-367" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-368"><a href="#cb7-368" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-369"><a href="#cb7-369" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-370"><a href="#cb7-370" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-371"><a href="#cb7-371" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-372"><a href="#cb7-372" aria-hidden="true" tabindex="-1"></a>    <span class="st">'EverPass'</span>:</span>
+<span id="cb7-373"><a href="#cb7-373" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-374"><a href="#cb7-374" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-375"><a href="#cb7-375" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'ORIGIN_YEAR_DATE_RANGE'</span>,</span>
+<span id="cb7-376"><a href="#cb7-376" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'FEATURE'</span>,</span>
+<span id="cb7-377"><a href="#cb7-377" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'EverPass_ECID_Temporal'</span>,</span>
+<span id="cb7-378"><a href="#cb7-378" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-379"><a href="#cb7-379" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-380"><a href="#cb7-380" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-381"><a href="#cb7-381" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-382"><a href="#cb7-382" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span>: {</span>
+<span id="cb7-383"><a href="#cb7-383" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'OrdinalEncoder'</span>,</span>
+<span id="cb7-384"><a href="#cb7-384" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'OrdinalEncoder'</span></span>
+<span id="cb7-385"><a href="#cb7-385" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-386"><a href="#cb7-386" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-387"><a href="#cb7-387" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-388"><a href="#cb7-388" aria-hidden="true" tabindex="-1"></a>    <span class="st">'BoughtPass'</span>: </span>
+<span id="cb7-389"><a href="#cb7-389" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb7-390"><a href="#cb7-390" aria-hidden="true" tabindex="-1"></a>        <span class="st">'feature_type'</span>: <span class="st">'TEMP'</span>,</span>
+<span id="cb7-391"><a href="#cb7-391" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_type'</span>: <span class="st">'SEASONYEAR'</span>,</span>
+<span id="cb7-392"><a href="#cb7-392" aria-hidden="true" tabindex="-1"></a>        <span class="st">'input_definition'</span>: <span class="st">'LABEL'</span>,</span>
+<span id="cb7-393"><a href="#cb7-393" aria-hidden="true" tabindex="-1"></a>        <span class="st">'udf_name'</span>: <span class="st">'BoughtPass_ECID_Temporal'</span>, </span>
+<span id="cb7-394"><a href="#cb7-394" aria-hidden="true" tabindex="-1"></a>        <span class="st">'var_type'</span>: {</span>
+<span id="cb7-395"><a href="#cb7-395" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="st">'cat'</span>,</span>
+<span id="cb7-396"><a href="#cb7-396" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'cat'</span></span>
+<span id="cb7-397"><a href="#cb7-397" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-398"><a href="#cb7-398" aria-hidden="true" tabindex="-1"></a>        <span class="st">'transformation'</span> : {</span>
+<span id="cb7-399"><a href="#cb7-399" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span>: <span class="va">None</span>,</span>
+<span id="cb7-400"><a href="#cb7-400" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span>: <span class="st">'None'</span></span>
+<span id="cb7-401"><a href="#cb7-401" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-402"><a href="#cb7-402" aria-hidden="true" tabindex="-1"></a>        <span class="st">'experiment_list'</span>: [<span class="st">'BASELINE'</span>, <span class="st">'NOHYPEROPT'</span>]</span>
+<span id="cb7-403"><a href="#cb7-403" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-404"><a href="#cb7-404" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>udf_inputs <span class="op">=</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'TRAINING'</span>: {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># </span><span class="al">TODO</span><span class="co">: PR to remove this duplication</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">'UDF_GRAIN'</span> : [<span class="st">'base.ECID'</span>], <span class="co"># input key to all udfs</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">'FEATURE'</span>:{</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span> : {</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">'SEASON_END'</span>:{</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : <span class="st">'20181005'</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> : <span class="st">'20191005'</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> : <span class="st">'20201005'</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                <span class="st">'3_YEAR_DATE_RANGE'</span>:{</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : [<span class="st">'20171001'</span>, <span class="st">'20191005'</span>],</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> : [<span class="st">'20181001'</span>, <span class="st">'20201005'</span>],</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> : [<span class="st">'20191001'</span>, <span class="st">'20211005'</span>],</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span>:{</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2017/18</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2018/19</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2019/20</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">'ORIGIN_YEAR_DATE_RANGE'</span>:{</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : [<span class="st">'20151005'</span>, <span class="st">'20191005'</span>],</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> : [<span class="st">'20151005'</span>, <span class="st">'20201005'</span>],</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> : [<span class="st">'20151005'</span>, <span class="st">'20211005'</span>],</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">'NOHYPEROPT'</span> : {</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">'SEASON_END'</span>:{</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : <span class="st">'20181005'</span>,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> : <span class="st">'20191005'</span>,</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> : <span class="st">'20201005'</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">'3_YEAR_DATE_RANGE'</span>:{</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : [<span class="st">'20171001'</span>, <span class="st">'20191005'</span>],</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> : [<span class="st">'20181001'</span>, <span class="st">'20201005'</span>],</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> : [<span class="st">'20191001'</span>, <span class="st">'20211005'</span>],</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span>:{</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2017/18</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2018/19</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2019/20</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>                <span class="st">'ORIGIN_YEAR_DATE_RANGE'</span>:{</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : [<span class="st">'20151005'</span>, <span class="st">'20191005'</span>],</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> : [<span class="st">'20151005'</span>, <span class="st">'20201005'</span>],</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> : [<span class="st">'20151005'</span>, <span class="st">'20211005'</span>],</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">'LABEL'</span> : {</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span> : {</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'SEASONYEAR'</span>: {</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2019/20</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2020/21</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2021/22</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span> : {</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'SEASONYEAR'</span>: {</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2019/20</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">1</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2020/21</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2021/22</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">'BASE_QUERY'</span>: {</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>            <span class="st">'BASELINE'</span> : {</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span> : <span class="st">'training_ecids_18_19.sql'</span>,</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>                <span class="dv">1</span> : <span class="st">'training_ecids_19_20.sql'</span>,</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>                <span class="dv">2</span> : <span class="st">'training_ecids_20_21.sql'</span>,</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>            <span class="st">'NOHYPEROPT'</span> : {</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span> : <span class="st">'training_ecids_18_19.sql'</span>,</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>                <span class="dv">1</span> : <span class="st">'training_ecids_19_20.sql'</span>,</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>                <span class="dv">2</span> : <span class="st">'training_ecids_20_21.sql'</span>,</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">'ADDITIONAL_COLUMNS'</span>: {</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span>: {</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span>: <span class="st">"'2018/19'"</span>,</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>                <span class="dv">1</span>: <span class="st">"'2019/20'"</span>,</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>                <span class="dv">2</span>: <span class="st">"'2020/21'"</span></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>    <span class="st">'INFERENCE'</span>: {</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>     <span class="st">'UDF_GRAIN'</span> : [<span class="st">'base.ECID'</span>], <span class="co"># input key to all udfs</span></span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>     <span class="st">'FEATURE'</span>:{</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>         <span class="st">'BASELINE'</span> : { </span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>             <span class="st">'SEASON_END'</span>: {    </span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>                     <span class="dv">0</span> : <span class="st">'20221005'</span>,</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>            <span class="st">'3_YEAR_DATE_RANGE'</span>: {</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>                     <span class="dv">0</span> : [<span class="st">'20190101'</span>, <span class="st">'20221005'</span>],</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span>: {</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2021/22</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>            <span class="st">'ORIGIN_YEAR_DATE_RANGE'</span>: { </span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : [<span class="st">'20051001'</span>, <span class="st">'20221005'</span>],</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>        <span class="st">'NOHYPEROPT'</span> : { </span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>             <span class="st">'SEASON_END'</span>: {    </span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>                     <span class="dv">0</span> : <span class="st">'20221005'</span>,</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>            <span class="st">'3_YEAR_DATE_RANGE'</span>: {</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>                     <span class="dv">0</span> : [<span class="st">'20190101'</span>, <span class="st">'20221005'</span>],</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span>: {</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2021/22</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>            <span class="st">'ORIGIN_YEAR_DATE_RANGE'</span>: { </span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span> : [<span class="st">'20051001'</span>, <span class="st">'20221005'</span>],</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>                },</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>         },</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>    <span class="st">'LABEL'</span> : {</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">'BASELINE'</span> : {</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span> : {</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2021/22</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>        <span class="st">'NOHYPEROPT'</span> : {</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span> : {</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span> :  <span class="st">"</span><span class="ch">\'</span><span class="st">2021/22</span><span class="ch">\'</span><span class="st">"</span>,</span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>    <span class="st">'BASE_QUERY'</span>: {</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>        <span class="st">'BASELINE'</span> : {</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>            <span class="dv">0</span> : <span class="st">'inference_base.sql'</span></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>        <span class="st">'NOHYPEROPT'</span> : {</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>            <span class="dv">0</span> : <span class="st">'inference_base.sql'</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ADDITIONAL_COLUMNS'</span>: {</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>            <span class="st">'SEASONYEAR'</span>: {</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>                <span class="dv">0</span>: <span class="st">"'2021/22'"</span>,</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A user does not need to use this notebook to create features this is a easy way to create and maintain your yaml files, but if you prefer to develop the yaml file in a IDE outside of a jupyter notebooks that is completely fine as well.</p>
+<p>The two function calls below are what push the python dictionary to the specified location for your production scripts to read at differing stages in the process</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>write_yaml_file(<span class="st">'./LTBP/files/yaml_files/'</span>, <span class="st">'features.yaml'</span>, feature_dict)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>write_yaml_file(<span class="st">'./LTBP/files/yaml_files/'</span>, <span class="st">'udf_inputs.yaml'</span>, udf_inputs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="step-3-generate-the-query-to-send-to-snowflake" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-generate-the-query-to-send-to-snowflake"><strong>Step 3:</strong> Generate the Query to Send to Snowflake</h3>
+<p>Below is what would be called inside your production level code to allow you to be able to query a training and inference set</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> data_system_utilities.file_parsers <span class="im">import</span> yaml <span class="im">as</span> yr</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> LTBP.data.utils <span class="im">import</span> pull_features_from_snowflake</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Training Query</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>experiment_name <span class="op">=</span> <span class="st">'BASELINE'</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>training_query <span class="op">=</span> pull_features_from_snowflake(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>     feature_dict<span class="op">=</span>yr.yaml_reader(<span class="st">'./LTBP/files/yaml_files/features.yaml'</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>     udf_inputs<span class="op">=</span>yr.yaml_reader(<span class="st">'./LTBP/files/yaml_files/udf_inputs.yaml'</span>)[<span class="st">'TRAINING'</span>],</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>     filepath_to_grain_list_query<span class="op">=</span><span class="st">'./LTBP/files/sql_files/'</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>     experiment_name<span class="op">=</span>experiment_name</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:root:static features in data set: 
+ ['DESTINATIONGEOAFINITYLABEL', 'GenderCode']
+INFO:root:temporal features in data set: 
+ ['Age', 'AvgVisitPerSeason', 'BoughtPass', 'EverCorePass', 'EverPass', 'GuestBehavior', 'IsEpicMixActivated', 'MarketingZone', 'MostCommonTicketComp', 'MostSubSeasonVisited', 'MostVisitedRegion', 'MostVisitedResort', 'OnlySingleResortKey', 'PartnerResortScannerFlag', 'ResortsVisited', 'SkierabilityLabel', 'SubSeasonsPerYear', 'TotalSeasonsScanned', 'TotalVisits', 'VisitMostInPeak']
+INFO:root:Appending static feature DESTINATIONGEOAFINITYLABEL to query
+INFO:root:Appending static feature GenderCode to query
+INFO:root:Finished appending static features
+INFO:root:reading training_ecids_18_19.sql for base query...
+INFO:root:reading training_ecids_19_20.sql for base query...
+INFO:root:reading training_ecids_20_21.sql for base query...
+INFO:root:final query output: 
+ select
+base.*
+, joined.DESTINATIONGEOAFINITYLABEL
+, joined.GenderCode
+, MACHINELEARNINGFEATURES.PROD.Age_ECID_Temporal(base.ECID, 20171001, 20191005) as Age, MACHINELEARNINGFEATURES.PROD.AvgVisitPerSeason_ECID_Temporal(base.ECID, 20171001, 20191005) as AvgVisitPerSeason, MACHINELEARNINGFEATURES.PROD.BoughtPass_ECID_Temporal(base.ECID, '2019/20') as BoughtPass, MACHINELEARNINGFEATURES.PROD.EverCorePass_ECID_Temporal(base.ECID, 20151005, 20191005) as EverCorePass, MACHINELEARNINGFEATURES.PROD.EverPass_ECID_Temporal(base.ECID, 20151005, 20191005) as EverPass, MACHINELEARNINGFEATURES.PROD.GuestBehavior_ECID_Temporal(base.ECID, '2017/18') as GuestBehavior, MACHINELEARNINGFEATURES.PROD.IsEpicMixActivated_ECID_Temporal(base.ECID, '2017/18') as IsEpicMixActivated, MACHINELEARNINGFEATURES.PROD.MarketingZone_ECID_Temporal(base.ECID, '2017/18') as MarketingZone, MACHINELEARNINGFEATURES.PROD.MostCommonTicketComp_ECID_Temporal(base.ECID, 20171001, 20191005) as MostCommonTicketComp, MACHINELEARNINGFEATURES.PROD.MostSubSeasonVisited_ECID_Temporal(base.ECID, 20171001, 20191005) as MostSubSeasonVisited, MACHINELEARNINGFEATURES.PROD.MostVisitedRegion_ECID_Temporal(base.ECID, 20171001, 20191005) as MostVisitedRegion, MACHINELEARNINGFEATURES.PROD.MostVisitedResort_ECID_Temporal(base.ECID, 20171001, 20191005) as MostVisitedResort, MACHINELEARNINGFEATURES.PROD.OnlySingleResortKey_ECID_Temporal(base.ECID, 20171001, 20191005) as OnlySingleResortKey, MACHINELEARNINGFEATURES.PROD.PartnerResortScannerFlag_ECID_Temporal(base.ECID, 20171001, 20191005) as PartnerResortScannerFlag, MACHINELEARNINGFEATURES.PROD.ResortsVisited_ECID_Temporal(base.ECID, 20171001, 20191005) as ResortsVisited, MACHINELEARNINGFEATURES.PROD.SkierabilityLabel_ECID_Temporal(base.ECID, '2017/18') as SkierabilityLabel, MACHINELEARNINGFEATURES.PROD.SubSeasonsPerYear_ECID_Temporal(base.ECID, 20171001, 20191005) as SubSeasonsPerYear, MACHINELEARNINGFEATURES.PROD.TotalSeasonsScanned_ECID_Temporal(base.ECID, 20171001, 20191005) as TotalSeasonsScanned, MACHINELEARNINGFEATURES.PROD.TotalVisits_ECID_Temporal(base.ECID, 20171001, 20191005) as TotalVisits, MACHINELEARNINGFEATURES.PROD.VisitMostInPeak_ECID_Temporal(base.ECID, 20171001, 20191005) as VisitMostInPeak
+
+, '2018/19' as SEASONYEAR
+from
+(select
+distinct fs.ECID as ecid,
+dd.SeasonYear as SeasonYear
+from BIDE_EDWDB_ARA_PROD.dbo.FactScan fs
+left join BIDE_EDWDB_ARA_PROD.dbo.DimDateSeason dd
+on dd.DateSeasonKey = fs.DateSeasonKey
+where
+dd.SeasonYear in ('2018/19')
+and fs.IsEmployee = 0
+and dd.Season = 'Winter'
+LIMIT 10000
+)base
+inner join machinelearningfeatures.prod.featurestore_ecid joined on joined.ecid = base.ecid 
+UNION ALL
+select
+base.*
+, joined.DESTINATIONGEOAFINITYLABEL
+, joined.GenderCode
+, MACHINELEARNINGFEATURES.PROD.Age_ECID_Temporal(base.ECID, 20181001, 20201005) as Age, MACHINELEARNINGFEATURES.PROD.AvgVisitPerSeason_ECID_Temporal(base.ECID, 20181001, 20201005) as AvgVisitPerSeason, MACHINELEARNINGFEATURES.PROD.BoughtPass_ECID_Temporal(base.ECID, '2020/21') as BoughtPass, MACHINELEARNINGFEATURES.PROD.EverCorePass_ECID_Temporal(base.ECID, 20151005, 20201005) as EverCorePass, MACHINELEARNINGFEATURES.PROD.EverPass_ECID_Temporal(base.ECID, 20151005, 20201005) as EverPass, MACHINELEARNINGFEATURES.PROD.GuestBehavior_ECID_Temporal(base.ECID, '2018/19') as GuestBehavior, MACHINELEARNINGFEATURES.PROD.IsEpicMixActivated_ECID_Temporal(base.ECID, '2018/19') as IsEpicMixActivated, MACHINELEARNINGFEATURES.PROD.MarketingZone_ECID_Temporal(base.ECID, '2018/19') as MarketingZone, MACHINELEARNINGFEATURES.PROD.MostCommonTicketComp_ECID_Temporal(base.ECID, 20181001, 20201005) as MostCommonTicketComp, MACHINELEARNINGFEATURES.PROD.MostSubSeasonVisited_ECID_Temporal(base.ECID, 20181001, 20201005) as MostSubSeasonVisited, MACHINELEARNINGFEATURES.PROD.MostVisitedRegion_ECID_Temporal(base.ECID, 20181001, 20201005) as MostVisitedRegion, MACHINELEARNINGFEATURES.PROD.MostVisitedResort_ECID_Temporal(base.ECID, 20181001, 20201005) as MostVisitedResort, MACHINELEARNINGFEATURES.PROD.OnlySingleResortKey_ECID_Temporal(base.ECID, 20181001, 20201005) as OnlySingleResortKey, MACHINELEARNINGFEATURES.PROD.PartnerResortScannerFlag_ECID_Temporal(base.ECID, 20181001, 20201005) as PartnerResortScannerFlag, MACHINELEARNINGFEATURES.PROD.ResortsVisited_ECID_Temporal(base.ECID, 20181001, 20201005) as ResortsVisited, MACHINELEARNINGFEATURES.PROD.SkierabilityLabel_ECID_Temporal(base.ECID, '2018/19') as SkierabilityLabel, MACHINELEARNINGFEATURES.PROD.SubSeasonsPerYear_ECID_Temporal(base.ECID, 20181001, 20201005) as SubSeasonsPerYear, MACHINELEARNINGFEATURES.PROD.TotalSeasonsScanned_ECID_Temporal(base.ECID, 20181001, 20201005) as TotalSeasonsScanned, MACHINELEARNINGFEATURES.PROD.TotalVisits_ECID_Temporal(base.ECID, 20181001, 20201005) as TotalVisits, MACHINELEARNINGFEATURES.PROD.VisitMostInPeak_ECID_Temporal(base.ECID, 20181001, 20201005) as VisitMostInPeak
+
+, '2019/20' as SEASONYEAR
+from
+(select
+distinct fs.ECID as ecid,
+dd.SeasonYear as SeasonYear
+from BIDE_EDWDB_ARA_PROD.dbo.FactScan fs
+left join BIDE_EDWDB_ARA_PROD.dbo.DimDateSeason dd
+on dd.DateSeasonKey = fs.DateSeasonKey
+where
+dd.SeasonYear in ('2019/20')
+and fs.IsEmployee = 0
+and dd.Season = 'Winter'
+LIMIT 10000
+)base
+inner join machinelearningfeatures.prod.featurestore_ecid joined on joined.ecid = base.ecid 
+UNION ALL
+select
+base.*
+, joined.DESTINATIONGEOAFINITYLABEL
+, joined.GenderCode
+, MACHINELEARNINGFEATURES.PROD.Age_ECID_Temporal(base.ECID, 20191001, 20211005) as Age, MACHINELEARNINGFEATURES.PROD.AvgVisitPerSeason_ECID_Temporal(base.ECID, 20191001, 20211005) as AvgVisitPerSeason, MACHINELEARNINGFEATURES.PROD.BoughtPass_ECID_Temporal(base.ECID, '2021/22') as BoughtPass, MACHINELEARNINGFEATURES.PROD.EverCorePass_ECID_Temporal(base.ECID, 20151005, 20211005) as EverCorePass, MACHINELEARNINGFEATURES.PROD.EverPass_ECID_Temporal(base.ECID, 20151005, 20211005) as EverPass, MACHINELEARNINGFEATURES.PROD.GuestBehavior_ECID_Temporal(base.ECID, '2019/20') as GuestBehavior, MACHINELEARNINGFEATURES.PROD.IsEpicMixActivated_ECID_Temporal(base.ECID, '2019/20') as IsEpicMixActivated, MACHINELEARNINGFEATURES.PROD.MarketingZone_ECID_Temporal(base.ECID, '2019/20') as MarketingZone, MACHINELEARNINGFEATURES.PROD.MostCommonTicketComp_ECID_Temporal(base.ECID, 20191001, 20211005) as MostCommonTicketComp, MACHINELEARNINGFEATURES.PROD.MostSubSeasonVisited_ECID_Temporal(base.ECID, 20191001, 20211005) as MostSubSeasonVisited, MACHINELEARNINGFEATURES.PROD.MostVisitedRegion_ECID_Temporal(base.ECID, 20191001, 20211005) as MostVisitedRegion, MACHINELEARNINGFEATURES.PROD.MostVisitedResort_ECID_Temporal(base.ECID, 20191001, 20211005) as MostVisitedResort, MACHINELEARNINGFEATURES.PROD.OnlySingleResortKey_ECID_Temporal(base.ECID, 20191001, 20211005) as OnlySingleResortKey, MACHINELEARNINGFEATURES.PROD.PartnerResortScannerFlag_ECID_Temporal(base.ECID, 20191001, 20211005) as PartnerResortScannerFlag, MACHINELEARNINGFEATURES.PROD.ResortsVisited_ECID_Temporal(base.ECID, 20191001, 20211005) as ResortsVisited, MACHINELEARNINGFEATURES.PROD.SkierabilityLabel_ECID_Temporal(base.ECID, '2019/20') as SkierabilityLabel, MACHINELEARNINGFEATURES.PROD.SubSeasonsPerYear_ECID_Temporal(base.ECID, 20191001, 20211005) as SubSeasonsPerYear, MACHINELEARNINGFEATURES.PROD.TotalSeasonsScanned_ECID_Temporal(base.ECID, 20191001, 20211005) as TotalSeasonsScanned, MACHINELEARNINGFEATURES.PROD.TotalVisits_ECID_Temporal(base.ECID, 20191001, 20211005) as TotalVisits, MACHINELEARNINGFEATURES.PROD.VisitMostInPeak_ECID_Temporal(base.ECID, 20191001, 20211005) as VisitMostInPeak
+
+, '2020/21' as SEASONYEAR
+from
+(select
+distinct fs.ECID as ecid,
+dd.SeasonYear as SeasonYear
+from BIDE_EDWDB_ARA_PROD.dbo.FactScan fs
+left join BIDE_EDWDB_ARA_PROD.dbo.DimDateSeason dd
+on dd.DateSeasonKey = fs.DateSeasonKey
+where
+dd.SeasonYear in ('2020/21')
+and fs.IsEmployee = 0
+and dd.Season = 'Winter'
+LIMIT 10000
+)base
+inner join machinelearningfeatures.prod.featurestore_ecid joined on joined.ecid = base.ecid</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Inference Query</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>experiment_name <span class="op">=</span> <span class="st">'BASELINE'</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>inference_query <span class="op">=</span> pull_features_from_snowflake(feature_dict<span class="op">=</span>yr.yaml_reader(<span class="st">'./LTBP/files/yaml_files/features.yaml'</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>     udf_inputs<span class="op">=</span>yr.yaml_reader(<span class="st">'./LTBP/files/yaml_files/udf_inputs.yaml'</span>)[<span class="st">'INFERENCE'</span>],</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>     filepath_to_grain_list_query<span class="op">=</span><span class="st">'./LTBP/files/sql_files/'</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>     experiment_name<span class="op">=</span>experiment_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:root:static features in data set: 
+ ['DESTINATIONGEOAFINITYLABEL', 'GenderCode']
+INFO:root:temporal features in data set: 
+ ['Age', 'AvgVisitPerSeason', 'BoughtPass', 'EverCorePass', 'EverPass', 'GuestBehavior', 'IsEpicMixActivated', 'MarketingZone', 'MostCommonTicketComp', 'MostSubSeasonVisited', 'MostVisitedRegion', 'MostVisitedResort', 'OnlySingleResortKey', 'PartnerResortScannerFlag', 'ResortsVisited', 'SkierabilityLabel', 'SubSeasonsPerYear', 'TotalSeasonsScanned', 'TotalVisits', 'VisitMostInPeak']
+INFO:root:Appending static feature DESTINATIONGEOAFINITYLABEL to query
+INFO:root:Appending static feature GenderCode to query
+INFO:root:Finished appending static features
+INFO:root:reading inference_base.sql for base query...
+INFO:root:final query output: 
+ select
+base.*
+, joined.DESTINATIONGEOAFINITYLABEL
+, joined.GenderCode
+, MACHINELEARNINGFEATURES.PROD.Age_ECID_Temporal(base.ECID, 20190101, 20221005) as Age, MACHINELEARNINGFEATURES.PROD.AvgVisitPerSeason_ECID_Temporal(base.ECID, 20190101, 20221005) as AvgVisitPerSeason, MACHINELEARNINGFEATURES.PROD.BoughtPass_ECID_Temporal(base.ECID, '2021/22') as BoughtPass, MACHINELEARNINGFEATURES.PROD.EverCorePass_ECID_Temporal(base.ECID, 20051001, 20221005) as EverCorePass, MACHINELEARNINGFEATURES.PROD.EverPass_ECID_Temporal(base.ECID, 20051001, 20221005) as EverPass, MACHINELEARNINGFEATURES.PROD.GuestBehavior_ECID_Temporal(base.ECID, '2021/22') as GuestBehavior, MACHINELEARNINGFEATURES.PROD.IsEpicMixActivated_ECID_Temporal(base.ECID, '2021/22') as IsEpicMixActivated, MACHINELEARNINGFEATURES.PROD.MarketingZone_ECID_Temporal(base.ECID, '2021/22') as MarketingZone, MACHINELEARNINGFEATURES.PROD.MostCommonTicketComp_ECID_Temporal(base.ECID, 20190101, 20221005) as MostCommonTicketComp, MACHINELEARNINGFEATURES.PROD.MostSubSeasonVisited_ECID_Temporal(base.ECID, 20190101, 20221005) as MostSubSeasonVisited, MACHINELEARNINGFEATURES.PROD.MostVisitedRegion_ECID_Temporal(base.ECID, 20190101, 20221005) as MostVisitedRegion, MACHINELEARNINGFEATURES.PROD.MostVisitedResort_ECID_Temporal(base.ECID, 20190101, 20221005) as MostVisitedResort, MACHINELEARNINGFEATURES.PROD.OnlySingleResortKey_ECID_Temporal(base.ECID, 20190101, 20221005) as OnlySingleResortKey, MACHINELEARNINGFEATURES.PROD.PartnerResortScannerFlag_ECID_Temporal(base.ECID, 20190101, 20221005) as PartnerResortScannerFlag, MACHINELEARNINGFEATURES.PROD.ResortsVisited_ECID_Temporal(base.ECID, 20190101, 20221005) as ResortsVisited, MACHINELEARNINGFEATURES.PROD.SkierabilityLabel_ECID_Temporal(base.ECID, '2021/22') as SkierabilityLabel, MACHINELEARNINGFEATURES.PROD.SubSeasonsPerYear_ECID_Temporal(base.ECID, 20190101, 20221005) as SubSeasonsPerYear, MACHINELEARNINGFEATURES.PROD.TotalSeasonsScanned_ECID_Temporal(base.ECID, 20190101, 20221005) as TotalSeasonsScanned, MACHINELEARNINGFEATURES.PROD.TotalVisits_ECID_Temporal(base.ECID, 20190101, 20221005) as TotalVisits, MACHINELEARNINGFEATURES.PROD.VisitMostInPeak_ECID_Temporal(base.ECID, 20190101, 20221005) as VisitMostInPeak
+
+, '2021/22' as SEASONYEAR
+from
+(-- base EDEE team guest behavior
+  with edee_base as (
+      SELECT 
+            distinct ECID
+      from BIDE_EDWDB_CUSTOMERMART_PROD.DBO.CustomerPASSPURCHASEBEHAVIOR cla
+      where 
+              cla.GuestPassPurchaseBehaviorDetailLabel &lt;&gt; 'Unknown'
+  ),
+
+  -- pass prospects not in guest behavior
+  prospects as (
+      Select
+            distinct ECID
+      from Vail_Reporting.Prod.GuestBehaviorBase
+      where 
+              GuestBehavior = 'Prospect'
+          and salesseason = '2021/22'
+  ),
+
+  -- paid prospects not in guest behavior
+  other_scans as (
+      select
+            distinct a.ECID
+      from
+      (
+          select 
+                distinct ECID
+              , SeasonYear
+          from "BIDE_EDWDB_ARA_PROD"."DBO"."SCANDAY"
+              where Season = 'Winter'
+      ) a
+      left join Vail_Reporting.Prod.GuestBehaviorBase b 
+          on a.ECID = b.ECID and a.SeasonYear = b.SalesSeason
+      where 
+              b.GuestBehavior is null
+          and a.seasonyear = '2021/22'
+  )
+
+  select
+        distinct ECID
+      , 'Inference Set' as SeasonYear
+  from
+  (
+      select
+            coalesce(base.ecid, pro.ecid, os.ecid) as ecid
+      from edee_base base
+      full outer join prospects pro
+          on pro.ecid = base.ecid
+      full outer join other_scans os
+          on os.ecid = base.ecid
+  ) a)base
+inner join machinelearningfeatures.prod.featurestore_ecid joined on joined.ecid = base.ecid</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="final-remarks" class="level1">
+<h1>Final Remarks</h1>
+<p>Congrats you have built your first Vail UDF Snowflake Query for both a Training and Validation</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Data_Preparation_Example_files/figure-html/image.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">image.png</figcaption><p></p>
+</figure>
+</div>
+<p><a href="https://www.youtube.com/watch?v=SC4xMk98Pdc">Click Me</a></p>
+<p>As always please ask questions or make improvements to the documentation</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

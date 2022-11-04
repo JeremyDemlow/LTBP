@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Functions Used In Modeling Efforts">
+
+<title>LTBP - Data Utils</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="LTBP - Data Utils">
+<meta property="og:description" content="Functions Used In Modeling Efforts">
+<meta property="og:site-name" content="LTBP">
+<meta name="twitter:title" content="LTBP - Data Utils">
+<meta name="twitter:description" content="Functions Used In Modeling Efforts">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">LTBP</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Data Utils</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Project Overview</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Tutorials</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_preparation_example.html" class="sidebar-item-text sidebar-link">Data Creation Process</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modeling_example.html" class="sidebar-item-text sidebar-link">Iterate Upon a Model</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./calling_library_cli.html" class="sidebar-item-text sidebar-link">Use Your CLI Commands</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Library Scripts</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_creation_script.html" class="sidebar-item-text sidebar-link">Data Creation Script</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modeling_script.html" class="sidebar-item-text sidebar-link">Modeling Script</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference_script.html" class="sidebar-item-text sidebar-link">Inference Script</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Library Functions</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data_utils.html" class="sidebar-item-text sidebar-link active">Data Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model_utilities.html" class="sidebar-item-text sidebar-link">Model Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.html" class="sidebar-item-text sidebar-link">Models</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./model_utilities_custom.html" class="sidebar-item-text sidebar-link">Model Utils</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference_utilities.html" class="sidebar-item-text sidebar-link">Inference Utils</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#get_yaml_dicts" id="toc-get_yaml_dicts" class="nav-link active" data-scroll-target="#get_yaml_dicts">get_yaml_dicts</a></li>
+  <li><a href="#generate_data_lake_query" id="toc-generate_data_lake_query" class="nav-link" data-scroll-target="#generate_data_lake_query">generate_data_lake_query</a></li>
+  <li><a href="#read_sfqueries_txt_sql_file" id="toc-read_sfqueries_txt_sql_file" class="nav-link" data-scroll-target="#read_sfqueries_txt_sql_file">read_sfQueries_txt_sql_file</a></li>
+  <li><a href="#return_sf_type" id="toc-return_sf_type" class="nav-link" data-scroll-target="#return_sf_type">return_sf_type</a></li>
+  <li><a href="#snowflake_query" id="toc-snowflake_query" class="nav-link" data-scroll-target="#snowflake_query">snowflake_query</a></li>
+  <li><a href="#query_feature_sets_to_adls_parquet_sf_fs" id="toc-query_feature_sets_to_adls_parquet_sf_fs" class="nav-link" data-scroll-target="#query_feature_sets_to_adls_parquet_sf_fs">query_feature_sets_to_adls_parquet_sf_fs</a></li>
+  <li><a href="#clean_special_chars" id="toc-clean_special_chars" class="nav-link" data-scroll-target="#clean_special_chars">clean_special_chars</a></li>
+  <li><a href="#select_multi_input_udfs" id="toc-select_multi_input_udfs" class="nav-link" data-scroll-target="#select_multi_input_udfs">select_multi_input_udfs</a></li>
+  <li><a href="#pull_features_from_snowflake" id="toc-pull_features_from_snowflake" class="nav-link" data-scroll-target="#pull_features_from_snowflake">pull_features_from_snowflake</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/JeremyDemlow/LTBP/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Data Utils</h1>
+</div>
+
+<div>
+  <div class="description">
+    Functions Used In Modeling Efforts
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L22" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_yaml_dicts" class="level3">
+<h3 class="anchored" data-anchor-id="get_yaml_dicts">get_yaml_dicts</h3>
+<blockquote class="blockquote">
+<pre><code> get_yaml_dicts (yaml_file_names:list)</code></pre>
+</blockquote>
+<p>Give a list of files to this function from the /files in a library and it will read/Parse yaml files and return a list of dictionaries to unpack</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>yaml_file_names</td>
+<td>list</td>
+<td>list of yaml file(s) names that are all in the yaml_files section of the repo</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>features, inputs <span class="op">=</span> get_yaml_dicts([<span class="st">'features.yaml'</span>, <span class="st">'udf_inputs.yaml'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L38" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="generate_data_lake_query" class="level3">
+<h3 class="anchored" data-anchor-id="generate_data_lake_query">generate_data_lake_query</h3>
+<blockquote class="blockquote">
+<pre><code> generate_data_lake_query (stage_name:str, stage_path:str, columns:list,
+                           header:bool=True, dtypes:list=None,
+                           extra_statement:str=None)</code></pre>
+</blockquote>
+<p>Given the columns names are provided this query will query out parquet data from azure datalake all in varchar this is the basic approach.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stage_name</td>
+<td>str</td>
+<td></td>
+<td>name of the sf stage to be created is just a file location pointer</td>
+</tr>
+<tr class="even">
+<td>stage_path</td>
+<td>str</td>
+<td></td>
+<td>adls file path location to start the stage location</td>
+</tr>
+<tr class="odd">
+<td>columns</td>
+<td>list</td>
+<td></td>
+<td>columns to query parquet files in adls</td>
+</tr>
+<tr class="even">
+<td>header</td>
+<td>bool</td>
+<td>True</td>
+<td>parquet files have headers</td>
+</tr>
+<tr class="odd">
+<td>dtypes</td>
+<td>list</td>
+<td>None</td>
+<td>defaults to Varchar when None else</td>
+</tr>
+<tr class="even">
+<td>extra_statement</td>
+<td>str</td>
+<td>None</td>
+<td>adding sql statements if desired</td>
+</tr>
+</tbody>
+</table>
+<p>There will be times where having the dtype could be very important to your process so you would want to be able to query it into memory with the correct dtype, but in this process there hasn’t been a reason to do that so it is skipped in LTBP</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [<span class="st">'destinationgeoafinitylabel'</span>,<span class="st">'evercorepass'</span>,<span class="st">'everpass'</span>,<span class="st">'gendercode'</span>,<span class="st">'guestbehavior'</span>,]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dtypes <span class="op">=</span> [<span class="st">'VARCHAR'</span>, <span class="st">'BOOLEAN'</span>, <span class="st">'BOOLEAN'</span>, <span class="st">'NUMBER'</span>, <span class="st">'FLOAT'</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> generate_data_lake_query(stage_name<span class="op">=</span><span class="st">'LTBPLocalRunTest'</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     stage_path<span class="op">=</span><span class="st">'projects/LTBP/FY23/experiments/&lt;EXPERIMENT_NAME&gt;/training_data/'</span>.replace(<span class="st">'&lt;EXPERIMENT_NAME&gt;'</span>, <span class="st">'ltbp_nbs_testing'</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>     columns<span class="op">=</span>columns,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     dtypes<span class="op">=</span>dtypes,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>     extra_statement<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    select
+    $1:"destinationgeoafinitylabel"::VARCHAR as destinationgeoafinitylabel
+, $1:"evercorepass"::BOOLEAN as evercorepass
+, $1:"everpass"::BOOLEAN as everpass
+, $1:"gendercode"::NUMBER as gendercode
+, $1:"guestbehavior"::FLOAT as guestbehavior
+
+    from @LTBPLocalRunTest/projects/LTBP/FY23/experiments/ltbp_nbs_testing/training_data/
+    None
+    </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [<span class="st">'destinationgeoafinitylabel'</span>,<span class="st">'evercorepass'</span>,<span class="st">'everpass'</span>,<span class="st">'gendercode'</span>,<span class="st">'guestbehavior'</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">'isepicmixactivated'</span>,<span class="st">'marketingzone'</span>,<span class="st">'mostcommonticketcomp'</span>,<span class="st">'mostsubseasonvisited'</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">'mostvisitedregion'</span>,<span class="st">'mostvisitedresort'</span>,<span class="st">'onlysingleresortkey'</span>,<span class="st">'partnerresortscannerflag'</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">'skierabilitylabel'</span>,<span class="st">'totalseasonsscanned'</span>,<span class="st">'visitmostinpeak'</span>,<span class="st">'age'</span>,<span class="st">'avgvisitperseason'</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">'resortsvisited'</span>,<span class="st">'subseasonsperyear'</span>,<span class="st">'totalvisits'</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> generate_data_lake_query(stage_name<span class="op">=</span><span class="st">'LTBPLocalRunTest'</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>     stage_path<span class="op">=</span><span class="st">'projects/LTBP/FY23/experiments/&lt;EXPERIMENT_NAME&gt;/training_data/'</span>.replace(<span class="st">'&lt;EXPERIMENT_NAME&gt;'</span>, <span class="st">'ltbp_nbs_testing'</span>),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>     columns<span class="op">=</span>columns,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>     extra_statement<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    select
+    $1:"destinationgeoafinitylabel"::varchar as destinationgeoafinitylabel
+, $1:"evercorepass"::varchar as evercorepass
+, $1:"everpass"::varchar as everpass
+, $1:"gendercode"::varchar as gendercode
+, $1:"guestbehavior"::varchar as guestbehavior
+, $1:"isepicmixactivated"::varchar as isepicmixactivated
+, $1:"marketingzone"::varchar as marketingzone
+, $1:"mostcommonticketcomp"::varchar as mostcommonticketcomp
+, $1:"mostsubseasonvisited"::varchar as mostsubseasonvisited
+, $1:"mostvisitedregion"::varchar as mostvisitedregion
+, $1:"mostvisitedresort"::varchar as mostvisitedresort
+, $1:"onlysingleresortkey"::varchar as onlysingleresortkey
+, $1:"partnerresortscannerflag"::varchar as partnerresortscannerflag
+, $1:"skierabilitylabel"::varchar as skierabilitylabel
+, $1:"totalseasonsscanned"::varchar as totalseasonsscanned
+, $1:"visitmostinpeak"::varchar as visitmostinpeak
+, $1:"age"::varchar as age
+, $1:"avgvisitperseason"::varchar as avgvisitperseason
+, $1:"resortsvisited"::varchar as resortsvisited
+, $1:"subseasonsperyear"::varchar as subseasonsperyear
+, $1:"totalvisits"::varchar as totalvisits
+
+    from @LTBPLocalRunTest/projects/LTBP/FY23/experiments/ltbp_nbs_testing/training_data/
+    None
+    </code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L86" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="read_sfqueries_txt_sql_file" class="level3">
+<h3 class="anchored" data-anchor-id="read_sfqueries_txt_sql_file">read_sfQueries_txt_sql_file</h3>
+<blockquote class="blockquote">
+<pre><code> read_sfQueries_txt_sql_file (file_name:str)</code></pre>
+</blockquote>
+<p>Simple utilty to read query files</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>file_name</td>
+<td>str</td>
+<td>sql file name to read</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="return_sf_type" class="level3">
+<h3 class="anchored" data-anchor-id="return_sf_type">return_sf_type</h3>
+<blockquote class="blockquote">
+<pre><code> return_sf_type (dtype:str, varchar:bool=True)</code></pre>
+</blockquote>
+<p>simple function to convert dytpes to snowflake dtypes this will be come a very useful thing to have as this will dtype</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dtype</td>
+<td>str</td>
+<td></td>
+<td>data type from a df in string form</td>
+</tr>
+<tr class="even">
+<td>varchar</td>
+<td>bool</td>
+<td>True</td>
+<td>to default all variables to VARCHAR</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L122" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="snowflake_query" class="level3">
+<h3 class="anchored" data-anchor-id="snowflake_query">snowflake_query</h3>
+<blockquote class="blockquote">
+<pre><code> snowflake_query (sfAccount:str='vailresorts.east-us-2.azure',
+                  sfUser:str='SVC_DS_MANAGER_SF@vailresorts.com',
+                  sfPswd:str='UEKF8ph4wbDP!', sfWarehouse:str=None,
+                  sfDatabase:str='MACHINELEARNINGOUTPUTS',
+                  sfSchema:str='DEV', sfRole:str='SNOWFLAKE_DS_USER')</code></pre>
+</blockquote>
+<p>Easy Connection To SnowFlake When Environs are set</p>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L135" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="query_feature_sets_to_adls_parquet_sf_fs" class="level3">
+<h3 class="anchored" data-anchor-id="query_feature_sets_to_adls_parquet_sf_fs">query_feature_sets_to_adls_parquet_sf_fs</h3>
+<blockquote class="blockquote">
+<pre><code> query_feature_sets_to_adls_parquet_sf_fs (sf_connection, sf_query:str,
+                                           azure_account:str,
+                                           azure_container:str,
+                                           data_lake_path:str,
+                                           data_lake_sas_token:str,
+                                           partition_by:str=None,
+                                           max_file_size:str='3200000',
+                                           header:str='True',
+                                           over_write:str='True')</code></pre>
+</blockquote>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sf_connection</td>
+<td></td>
+<td></td>
+<td>established snowflake connection</td>
+</tr>
+<tr class="even">
+<td>sf_query</td>
+<td>str</td>
+<td></td>
+<td>sql query desired to be pushed to adls</td>
+</tr>
+<tr class="odd">
+<td>azure_account</td>
+<td>str</td>
+<td></td>
+<td>azure acount name</td>
+</tr>
+<tr class="even">
+<td>azure_container</td>
+<td>str</td>
+<td></td>
+<td>azure container name to push results to</td>
+</tr>
+<tr class="odd">
+<td>data_lake_path</td>
+<td>str</td>
+<td></td>
+<td>adls file path location to dump files to</td>
+</tr>
+<tr class="even">
+<td>data_lake_sas_token</td>
+<td>str</td>
+<td></td>
+<td>most project use os.environ[“DATALAKE_SAS_TOKEN_SECRET”]</td>
+</tr>
+<tr class="odd">
+<td>partition_by</td>
+<td>str</td>
+<td>None</td>
+<td>save data in a paritions manner</td>
+</tr>
+<tr class="even">
+<td>max_file_size</td>
+<td>str</td>
+<td>3200000</td>
+<td>choose the file size you would like to save your parquet files</td>
+</tr>
+<tr class="odd">
+<td>header</td>
+<td>str</td>
+<td>True</td>
+<td>saving with headers or not needs to be a string</td>
+</tr>
+<tr class="even">
+<td>over_write</td>
+<td>str</td>
+<td>True</td>
+<td>if file(s) exisit this will earse exisiting files</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L164" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="clean_special_chars" class="level3">
+<h3 class="anchored" data-anchor-id="clean_special_chars">clean_special_chars</h3>
+<blockquote class="blockquote">
+<pre><code> clean_special_chars (text)</code></pre>
+</blockquote>
+<p>small nlp clean up tool to take odd characters that could be in vendor data inside of column names and then replaces empty spaces with <code>_</code></p>
+<p>Args: * text (str): dataframe column names as strings</p>
+<p>Returns: * str: clean column name</p>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L185" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="select_multi_input_udfs" class="level3">
+<h3 class="anchored" data-anchor-id="select_multi_input_udfs">select_multi_input_udfs</h3>
+<blockquote class="blockquote">
+<pre><code> select_multi_input_udfs (feature_dict:dict, udf_inputs:dict, query:str,
+                          sf_database:str, sf_schema:str, iteration:int,
+                          exp_name:str)</code></pre>
+</blockquote>
+<p>utility function called by <a href="https://JeremyDemlow.github.io/LTBP/data_utils.html#pull_features_from_snowflake"><code>pull_features_from_snowflake</code></a> to create multi input snowflake udf calls UDF_NAME(Input 1, Input 2) a common example is at the ecid grain ISEPICMIXACTIVATED(ECID, 20201001, 20211001)</p>
+<p>Args: feature_dict (dict): multi key dictionary of features with information the function will end up using to create a dynamic call udf_inputs (dict): all information needed for the udf inputs to be created. query (str): query string being manipulated sf_database (str): snowflake database the udfs live in sf_schema (str): snowflake schema the udfs live in iteration (int): iteration give the function the ability to know what inputs are going to be passed to the udf</p>
+<p>Returns: str: manipulated query string</p>
+<p>These functions are small twist on MSU already created calls to incorporate experimentation names to the mix to allow for sequential or concurrent calls to python scripts to allow for a smoother and faster iteration of experiments to happen.</p>
+<hr>
+<p><a href="https://github.com/JeremyDemlow/LTBP/blob/main/LTBP/data/utils.py#L238" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="pull_features_from_snowflake" class="level3">
+<h3 class="anchored" data-anchor-id="pull_features_from_snowflake">pull_features_from_snowflake</h3>
+<blockquote class="blockquote">
+<pre><code> pull_features_from_snowflake (feature_dict:dict, udf_inputs:dict,
+                               filepath_to_grain_list_query:str=None,
+                               sf_database:str='MACHINELEARNINGFEATURES',
+                               sf_schema:str='PROD',
+                               feature_table_join:str=None,
+                               extra_statement:str=None,
+                               experiment_name:str='BASELINE')</code></pre>
+</blockquote>
+<p>a function to allow a user dynamically create snowflake queries that creates a feature set that will be transformed into inputs that are suitable for ML like task. this function starts with a pre-determined list that will define a grain (most commonly used at the ECID grain) that will dynamically call snowflake sql udf(s) and possibliy join a table that has static like features that will create a dataset.</p>
+<p>To have more understanding of this function and the useability please visit (https://vailresorts.gitlab.io/data-science/machine_learning_utilities/)</p>
+<p>Args: feature_dict (dict): this dictionary will have information on all the features a user is looking to gather in one feature set. Each feature will need a feature_type, input_type, input_definition, and a udf_name. udf_inputs (dict): this dictionary will have all the information needed for non “static” like features that are being created via the joined table. This dictionary will need to have a key UDF_GRAIN, FEATURE, LABEL, BASE_QUERY. filepath_to_grain_list_query (str, optional): file location of sql files to read. sf_database (str, optional): snowflake database UDFs live. Defaults to ‘MACHINELEARNINGFEATURES’. sf_schema (str, optional): snowflake schema UDFs live. Defaults to ‘PROD’. feature_table_join (str, optional): a table other than the feature store to join to this dynamic call that will have all the static features needed to complete the feature set note the table alias on the join statment must be joined. Defaults to None. extra_statement (str, optional): allows for additional sql statements i.e LIMIT 1000. Defaults to None.</p>
+<p>Returns: str: mainpulated string query ready to be sent to snowflake</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
