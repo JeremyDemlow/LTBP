@@ -155,10 +155,10 @@ def model_train(
             'timestamp': datetime.datetime.now(pytz.timezone("US/Mountain")).strftime('%Y-%m-%d %H:%M:%S'),
             'artifacts': json.dumps({"azure_parent_folder": adls_path}),
             'metrics': json.dumps(result_dict),
-            'experiment_name' : experiment_name,
-            'experiment' : experiment,
-            'production_model' : False,
-            'ever_production' : False,              
+            'experiment_name': experiment_name,
+            'experiment': experiment,
+            'production_model': False,
+            'ever_production': False,
         }
     ]
 

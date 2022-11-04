@@ -10,7 +10,7 @@ from data_system_utilities.snowflake.utils import make_stage_query_generator
 
 from machine_learning_utilities import preprocessing
 
-from ..data.utils import snowflake_query, get_yaml_dicts, generate_data_lake_query
+from ..data.utils import snowflake_query, generate_data_lake_query
 
 from sklearn.model_selection import train_test_split
 
@@ -246,11 +246,11 @@ def create_stage_and_query_stage_sf(
         (os.path.join('experiments', experiment_name)
         if experiment else os.path.join(os.getenv('CI_COMMIT_SHA', 'LocalRunTest'), experiment_name))}""".replace(' ', '')+'/'
     stage_query = make_stage_query_generator(
-            stage_name=etl["stage_name"] + etl['FY_folder'] + os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'),
-            url=stage_url,
-            sas_token=os.environ["DATALAKE_SAS_TOKEN_SECRET"],
-            file_type="parquet",
-        )
+        stage_name=etl["stage_name"] + etl['FY_folder'] + os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'),
+        url=stage_url,
+        sas_token=os.environ["DATALAKE_SAS_TOKEN_SECRET"],
+        file_type="parquet",
+    )
     sf = snowflake_query()
     _ = sf.run_sql_str(stage_query)
     # TODO: Figure out a identification feature like season year

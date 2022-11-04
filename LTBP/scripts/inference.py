@@ -29,12 +29,13 @@ def model_inference(
     ):  # noqa:
 
     features, udf_inputs, etl_dict, models_dict = get_yaml_dicts(yaml_file_list)
-    sf = snowflake_query(sfSchema=sfSchema)
     adls_paths = []
     model_names = []
     experiment_names = []
     experiments = []
+    commit_ids = []
     if sfSchema.lower() != 'dev':
+        sf = snowflake_query(sfSchema=sfSchema)
         prod_model = sf.run_sql_str(f'''SELECT *
         FROM MACHINELEARNINGOUTPUTS.{sfSchema}.{models_dict['tracking_table']}
         WHERE PRODUCTION_MODEL
@@ -54,6 +55,7 @@ def model_inference(
             model_names.append(model_name)
             experiment_names.append(v['EXPERIMENT_NAME'])
             experiments.append(v['EXPERIMENT'])
+            commit_ids.append(v['COMMITID'])
     else:
         adls_path = os.path.join(
             (os.path.join(etl_dict['data_lake_path'], 'experiments', experiment_name)
@@ -68,11 +70,8 @@ def model_inference(
         model_names.append(model_name)
         experiment_names.append(experiment_name)
         experiments.append(experiment)
-    """
-    This came about while thinking about having more than one production model
-    making a functional call to this is probably better than this long code
-    """
-    for adls_path, model_name, exp_name in zip(adls_paths, model_names, experiment_names):
+
+    for adl_path, model_name, exp_name, com_id in zip(adls_paths, model_names, experiment_names, commit_ids):
         df_infer = create_stage_and_query_stage_sf(
             sf=sf,
             features=features,
@@ -85,7 +84,7 @@ def model_inference(
             extra_statement='LIMIT 1000'  # Can add limit when experimenting 'LIMIT 1000'
         )
         model = pull_sklearn_object_from_adls(
-            adls_path=os.path.join(adls_path,
+            adls_path=os.path.join(adl_path,
                                    models_dict['modeling_adls_path'],
                                    models_dict[exp_name]['model_trainer']
                                    ) + '/',
@@ -107,9 +106,17 @@ def model_inference(
         logging.info(f'preview predictions being added:\n{sf_df.head(3)}')
         logging.info(f'preview predictions values addes:\n{sf_df.iloc[0].values}')
         logging.info(f'preview predictions being added columns:\n{sf_df.columns}')
+        adl_path = (adl_path if sfSchema.lower() == 'dev' and experiment
+                    else os.path.join((os.path.join(
+                        etl_dict['data_lake_path'], 'experiments', experiment_name)
+                        if experiment
+                        else
+                        os.path.join(etl_dict['data_lake_path'], com_id, exp_name))
+        )
+        )
         az = FileHandling(os.environ[models_dict['connection_str']])
         az.upload_file(
-            azure_file_path=os.path.join(adls_path,
+            azure_file_path=os.path.join(adl_path,
                                          models_dict['predictions_adls_path'],
                                          models_dict[exp_name]['model_trainer']),
             local_file_path=file_name,
@@ -118,7 +125,7 @@ def model_inference(
         )
         os.unlink(file_name)
         stage_url = f"azure://{etl_dict['azure_account']}.blob.core.windows.net/{etl_dict['azure_container']}/"
-        preds_file_path = os.path.join(adls_path,
+        preds_file_path = os.path.join(adl_path,
                                        models_dict['predictions_adls_path'],
                                        models_dict[exp_name]['model_trainer'],
                                        file_name)
