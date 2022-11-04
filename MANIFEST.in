@@ -2,4 +2,7 @@ include settings.ini
 include LICENSE
 include CONTRIBUTING.md
 include README.md
+include LTBP/files/*
+include LTBP/files/yaml_files/*
+include LTBP/files/sql_files/*
 recursive-exclude * __pycache__

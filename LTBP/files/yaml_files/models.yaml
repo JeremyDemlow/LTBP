@@ -1,0 +1,29 @@
+BASELINE:
+  description: Standard baseline xgb_hyperopt approach status quo of LTBP of the past
+  hyper_opt_subsample_size: 2750000
+  hyperopt_evals: 2
+  model_trainer: train_xgb
+  training_subsample_size: 5000000
+  x_preprocess_object_name: standard_pipe.pickle
+  y_preprocess_object_name: null
+  y_scaler_type: null
+NOHYPEROPT:
+  description: Only here to see if it works delete at some point xgb_fit_only
+  hyper_opt_subsample_size: ''
+  hyperopt_evals: ''
+  model_trainer: train_xgb_basic
+  training_subsample_size: 5000000
+  x_preprocess_object_name: standard_pipe.pickle
+  y_preprocess_object_name: null
+  y_scaler_type: null
+connection_str: DATALAKE_CONN_STR_SECRET
+hold_out_table: LTBP_HOLDOUT_TEST_MODEL_RESULTS
+identification:
+- ECID
+- SEASONYEAR
+inference_sf_table_name: LTBP_PREDICTIONS_FY23
+modeling_adls_path: modeling/
+predictions_adls_path: predictions/
+preprocessors_adls_path: preprocessors/
+sas_token: DATALAKE_SAS_TOKEN_SECRET
+tracking_table: LTBP_MODEL_TRACKING_FY23

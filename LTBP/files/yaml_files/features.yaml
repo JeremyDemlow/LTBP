@@ -1,0 +1,308 @@
+Age:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: StandardScaler
+    NOHYPEROPT: StandardScaler
+  udf_name: Age_ECID_Temporal
+  var_type:
+    BASELINE: cont
+    NOHYPEROPT: cont
+AvgVisitPerSeason:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: StandardScaler
+    NOHYPEROPT: StandardScaler
+  udf_name: AvgVisitPerSeason_ECID_Temporal
+  var_type:
+    BASELINE: cont
+    NOHYPEROPT: cont
+BoughtPass:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: LABEL
+  input_type: SEASONYEAR
+  transformation:
+    BASELINE: null
+    NOHYPEROPT: None
+  udf_name: BoughtPass_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+DESTINATIONGEOAFINITYLABEL:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: STATIC
+  input_definition: FEATURE
+  input_type: null
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: DESTINATIONGEOAFINITYLABEL
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+EverCorePass:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: ORIGIN_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: EverCorePass_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+EverPass:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: ORIGIN_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: EverPass_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+GenderCode:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: STATIC
+  input_definition: FEATURE
+  input_type: null
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: GenderCode
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+GuestBehavior:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: GuestBehavior_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+IsEpicMixActivated:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: IsEpicMixActivated_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+MarketingZone:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: MarketingZone_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+MostCommonTicketComp:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: MostCommonTicketComp_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+MostSubSeasonVisited:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: MostSubSeasonVisited_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+MostVisitedRegion:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: MostVisitedRegion_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+MostVisitedResort:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: MostVisitedResort_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+OnlySingleResortKey:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: OnlySingleResortKey_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+PartnerResortScannerFlag:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: PartnerResortScannerFlag_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+ResortsVisited:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: ResortsVisited_ECID_Temporal
+  var_type:
+    BASELINE: cont
+    NOHYPEROPT: cont
+SkierabilityLabel:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: SEASONYEAR
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: SkierabilityLabel_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+SubSeasonsPerYear:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: StandardScaler
+    NOHYPEROPT: StandardScaler
+  udf_name: SubSeasonsPerYear_ECID_Temporal
+  var_type:
+    BASELINE: cont
+    NOHYPEROPT: cont
+TotalSeasonsScanned:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: TotalSeasonsScanned_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat
+TotalVisits:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: StandardScaler
+    NOHYPEROPT: StandardScaler
+  udf_name: TotalVisits_ECID_Temporal
+  var_type:
+    BASELINE: cont
+    NOHYPEROPT: cont
+VisitMostInPeak:
+  experiment_list:
+  - BASELINE
+  - NOHYPEROPT
+  feature_type: TEMP
+  input_definition: FEATURE
+  input_type: 3_YEAR_DATE_RANGE
+  transformation:
+    BASELINE: OrdinalEncoder
+    NOHYPEROPT: OrdinalEncoder
+  udf_name: VisitMostInPeak_ECID_Temporal
+  var_type:
+    BASELINE: cat
+    NOHYPEROPT: cat

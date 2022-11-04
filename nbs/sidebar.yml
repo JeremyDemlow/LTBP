@@ -1,0 +1,23 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - section: Tutorials
+        contents:
+        - Data_Preparation_Example.ipynb
+        - Modeling_Example.ipynb
+        - Calling_Library_CLI.ipynb
+
+      - section: Library Scripts
+        contents:
+        - 00a_Data_Creation_Script.ipynb
+        - 01c_Modeling_Script.ipynb
+        - 02b_Inference_Script.ipynb
+
+      - section: Library Functions
+        contents:
+          - 00_Data_Utils.ipynb
+          - 01a_Model_Utilities.ipynb
+          - 01b_Models.ipynb
+          - 01a_Model_Utilities_Custom.ipynb
+          - 02_Inference_Utilities.ipynb

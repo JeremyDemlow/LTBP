@@ -1,0 +1,132 @@
+INFERENCE:
+  ADDITIONAL_COLUMNS:
+    SEASONYEAR:
+      0: '''2021/22'''
+  BASE_QUERY:
+    BASELINE:
+      0: inference_base.sql
+    NOHYPEROPT:
+      0: inference_base.sql
+  FEATURE:
+    BASELINE:
+      3_YEAR_DATE_RANGE:
+        0:
+        - '20190101'
+        - '20221005'
+      ORIGIN_YEAR_DATE_RANGE:
+        0:
+        - '20051001'
+        - '20221005'
+      SEASONYEAR:
+        0: '''2021/22'''
+      SEASON_END:
+        0: '20221005'
+    NOHYPEROPT:
+      3_YEAR_DATE_RANGE:
+        0:
+        - '20190101'
+        - '20221005'
+      ORIGIN_YEAR_DATE_RANGE:
+        0:
+        - '20051001'
+        - '20221005'
+      SEASONYEAR:
+        0: '''2021/22'''
+      SEASON_END:
+        0: '20221005'
+  LABEL:
+    BASELINE:
+      SEASONYEAR:
+        0: '''2021/22'''
+    NOHYPEROPT:
+      SEASONYEAR:
+        0: '''2021/22'''
+  UDF_GRAIN:
+  - base.ECID
+TRAINING:
+  ADDITIONAL_COLUMNS:
+    SEASONYEAR:
+      0: '''2018/19'''
+      1: '''2019/20'''
+      2: '''2020/21'''
+  BASE_QUERY:
+    BASELINE:
+      0: training_ecids_18_19.sql
+      1: training_ecids_19_20.sql
+      2: training_ecids_20_21.sql
+    NOHYPEROPT:
+      0: training_ecids_18_19.sql
+      1: training_ecids_19_20.sql
+      2: training_ecids_20_21.sql
+  FEATURE:
+    BASELINE:
+      3_YEAR_DATE_RANGE:
+        0:
+        - '20171001'
+        - '20191005'
+        1:
+        - '20181001'
+        - '20201005'
+        2:
+        - '20191001'
+        - '20211005'
+      ORIGIN_YEAR_DATE_RANGE:
+        0:
+        - '20151005'
+        - '20191005'
+        1:
+        - '20151005'
+        - '20201005'
+        2:
+        - '20151005'
+        - '20211005'
+      SEASONYEAR:
+        0: '''2017/18'''
+        1: '''2018/19'''
+        2: '''2019/20'''
+      SEASON_END:
+        0: '20181005'
+        1: '20191005'
+        2: '20201005'
+    NOHYPEROPT:
+      3_YEAR_DATE_RANGE:
+        0:
+        - '20171001'
+        - '20191005'
+        1:
+        - '20181001'
+        - '20201005'
+        2:
+        - '20191001'
+        - '20211005'
+      ORIGIN_YEAR_DATE_RANGE:
+        0:
+        - '20151005'
+        - '20191005'
+        1:
+        - '20151005'
+        - '20201005'
+        2:
+        - '20151005'
+        - '20211005'
+      SEASONYEAR:
+        0: '''2017/18'''
+        1: '''2018/19'''
+        2: '''2019/20'''
+      SEASON_END:
+        0: '20181005'
+        1: '20191005'
+        2: '20201005'
+  LABEL:
+    BASELINE:
+      SEASONYEAR:
+        0: '''2019/20'''
+        1: '''2020/21'''
+        2: '''2021/22'''
+    NOHYPEROPT:
+      SEASONYEAR:
+        0: '''2019/20'''
+        1: '''2020/21'''
+        2: '''2021/22'''
+  UDF_GRAIN:
+  - base.ECID
