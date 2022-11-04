@@ -232,6 +232,7 @@ def save_sklearn_object_to_data_lake(
 # %% ../../nbs/01a_Model_Utilities.ipynb 21
 def create_stage_and_query_stage_sf(
     sf,  # Snowflake connection
+    features: dict,  # template feature input expected format
     etl: dict,  # template etl input expected format
     udf_inputs: dict,  # template udf input expected format
     train_or_inference: str,  # training or inference
@@ -240,15 +241,16 @@ def create_stage_and_query_stage_sf(
     experiment: bool = True,  # Boolean fed to function from script to say if its an experiment
     extra_statement: str = None,  # defaults to None to allow for experimentation
 ):
-    features, udf_inputs, etl = get_yaml_dicts(['features.yaml', 'udf_inputs.yaml', 'etl.yaml'])
-    stage_url = f"""azure://{etl['azure_account']}.blob.core.windows.net/{etl['azure_container']}/{etl['data_lake_path']}{(os.path.join('experiments', experiment_name)
-        if experiment else os.path.join('LocalRunTest'))}""".replace(' ', '')
+    stage_url = f"""azure://{etl['azure_account']}.blob.core.windows.net/{
+        etl['azure_container']}/{etl['data_lake_path']}{
+        (os.path.join('experiments', experiment_name)
+        if experiment else os.path.join(os.getenv('CI_COMMIT_SHA', 'LocalRunTest'), experiment_name))}""".replace(' ', '')+'/'
     stage_query = make_stage_query_generator(
-        stage_name=etl["stage_name"] + etl['FY_folder'] + os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'),
-        url=stage_url,
-        sas_token=os.environ["DATALAKE_SAS_TOKEN_SECRET"],
-        file_type="parquet",
-    )
+            stage_name=etl["stage_name"] + etl['FY_folder'] + os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'),
+            url=stage_url,
+            sas_token=os.environ["DATALAKE_SAS_TOKEN_SECRET"],
+            file_type="parquet",
+        )
     sf = snowflake_query()
     _ = sf.run_sql_str(stage_query)
     # TODO: Figure out a identification feature like season year
@@ -262,7 +264,6 @@ def create_stage_and_query_stage_sf(
                                      columns=indentification + columns,
                                      extra_statement=extra_statement)
     logging.info(f'adls snowflake stage query {query}')
-    sf = snowflake_query()
     df = sf.run_sql_str(query)
     logging.info(f'Preview dataframe queried {df.head()}')
     return df

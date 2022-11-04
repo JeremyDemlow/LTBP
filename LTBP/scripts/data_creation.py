@@ -34,10 +34,15 @@ def data_creation(
                                          udf_inputs=udf_inputs[train_or_inference.upper()],
                                          filepath_to_grain_list_query=os.path.join(files.__path__[0], etl['query_file_path']),
                                          experiment_name=experiment_name)
-    data_lake_path = os.path.join((os.path.join(etl['data_lake_path'], 'experiments', experiment_name)
-                                   if experiment
-                                   else os.path.join(etl['data_lake_path'],
-                                                     os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'))), train_or_inference.lower()+'_data/')
+    data_lake_path = os.path.join(
+        (os.path.join(etl['data_lake_path'], 'experiments', experiment_name)
+         if experiment
+         else os.path.join(
+             etl['data_lake_path'],
+             os.environ.get('CI_COMMIT_SHA', 'LocalRunTest'),
+             experiment_name
+        )
+        ), train_or_inference.lower()+'_data/')
     logging.info(f'Checking {data_lake_path} to either skip creation for experiment or create a production dataset')
     fh = FileHandling(os.environ['DATALAKE_CONN_STR_SECRET'])
     ald_files = fh.ls_blob(path=data_lake_path, container_name=etl['azure_container'])
@@ -53,4 +58,4 @@ def data_creation(
             data_lake_sas_token=os.environ["DATALAKE_SAS_TOKEN_SECRET"],
         )
     else:
-        logging.warning(f'{data_lake_path} already exists this should be do experimentation runs')
+        logging.warning(f'{data_lake_path} already exists is the expected behavior for experiments and local notebook runs')

@@ -9,8 +9,8 @@ BASELINE:
   y_scaler_type: null
 NOHYPEROPT:
   description: Only here to see if it works delete at some point xgb_fit_only
-  hyer_opt_subsample_size: null
-  hyper_opt_subsample_size: null
+  hyper_opt_subsample_size: ''
+  hyperopt_evals: ''
   model_trainer: train_xgb_basic
   training_subsample_size: 5000000
   x_preprocess_object_name: standard_pipe.pickle

@@ -14,15 +14,16 @@ from LTBP.modeling.utils import (
 from ..modeling.custom_utils import evaluate, send_holdout_results_to_sf
 
 from machine_learning_utilities import preprocessing
-
 from machine_learning_utilities.project_log import project_log
 
 from sklearn.pipeline import Pipeline
 
 import LTBP.modeling.models as ds_models
+import datetime
 import os
 import logging
 import json
+import pytz
 
 # %% ../../nbs/01c_Modeling_Script.ipynb 8
 @call_parse
@@ -41,6 +42,7 @@ def model_train(
     sf = snowflake_query(sfSchema='dev' if sfSchema.lower() == 'dev' else sfSchema)
     df = create_stage_and_query_stage_sf(
         sf=sf,
+        features=features,
         etl=etl_dict,
         udf_inputs=udf_inputs,
         train_or_inference='TRAINING',
@@ -56,7 +58,7 @@ def model_train(
          else os.path.join(
              etl_dict['data_lake_path'],
              os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))
-         ), models_dict['preprocessors_adls_path'], models_dict['BASELINE']['model_trainer'])
+         ), models_dict['preprocessors_adls_path'], models_dict[experiment_name]['model_trainer'])
 
     # Grab all Categorical and Continous Variables for Modeling
     cat_vars = [{f.upper(): values['transformation'][experiment_name]} for f, values in features.items()
@@ -143,22 +145,36 @@ def model_train(
              etl_dict['data_lake_path'], os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))
          )
     )
+    custom_project_log = [
+        {
+            'action_description': models_dict[experiment_name]["description"],
+            'transaction_type': "model_training",
+            'commitid': os.getenv("CI_COMMIT_SHA", 'LocalRunNBS'),
+            'environment': os.getenv("prod_or_dev", None),
+            'branch': os.getenv("CI_COMMIT_REF_SLUG", None),
+            'timestamp': datetime.datetime.now(pytz.timezone("US/Mountain")).strftime('%Y-%m-%d %H:%M:%S'),
+            'artifacts': json.dumps({"azure_parent_folder": adls_path}),
+            'metrics': json.dumps(result_dict),
+            'experiment_name' : experiment_name,
+            'experiment' : experiment,
+            'production_model' : False,
+            'ever_production' : False,              
+        }
+    ]
 
     project_log_df = project_log.project_log(
         snowflake_connection=sf,
         table_name=models_dict['tracking_table'],
-        action_description=models_dict[experiment_name]["description"],
-        transaction_type="model_training",
-        artifacts=json.dumps({"azure_parent_folder": adls_path}),
-        metrics=json.dumps(result_dict),
+        custom_schema=custom_project_log,
         append_or_replace="append",
     )
-    logging.info(f'project log preview:\n{project_log_df.head(2)}')
+    logging.info(f'project log preview:\n{project_log_df}')
+    logging.info(f'project log values preview:\n{project_log_df.loc[0].values}')
 
     # Saving sklearn pipeline to adls
     logging.info('Saving model and sending it to adls')
     full_pipeline = Pipeline([('preprocessing', pipe), ('classification', model)])
-    adls_path = os.path.join(adls_path, models_dict['modeling_adls_path'], models_dict['BASELINE']['model_trainer'])
+    adls_path = os.path.join(adls_path, models_dict['modeling_adls_path'], models_dict[experiment_name]['model_trainer'])
     save_sklearn_object_to_data_lake(
         save_object=full_pipeline,
         adls_path=adls_path,

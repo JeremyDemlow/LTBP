@@ -16,6 +16,7 @@ import os
 import logging
 import datetime as dt
 import scikitplot
+import pytz
 
 # %% ../../nbs/01a_Model_Utilities_Custom.ipynb 4
 def evaluate(model,
@@ -80,7 +81,7 @@ def send_holdout_results_to_sf(sf,
                                ):
     hold_out_df = pd.DataFrame(id_list)
     hold_out_df['PROBABILITY'] = probs[:, 1]
-    hold_out_df['DATECREATED'] = dt.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    hold_out_df['DATECREATED'] = dt.datetime.now(pytz.timezone("US/Mountain")).strftime('%Y-%m-%d %H:%M:%S')
     hold_out_df['EXP_COMMIT_CI_SHA'] = experiment_name+'_'+os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')
     logging.info(f'hold out data preview going to snowflake {hold_out_df.head(3)}')
     sf = snowflake_query()
@@ -94,8 +95,8 @@ def send_holdout_results_to_sf(sf,
                               if experiment
                               else os.path.join(
                                   etl_dict['data_lake_path'],
-                                  os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS')))
-                             , 'holdout_results/', model_dict[experiment_name]['model_trainer'])+'/'
+                                  os.environ.get('CI_COMMIT_SHA', 'LocalRunNBS'))
+                              ), 'holdout_results/', model_dict[experiment_name]['model_trainer'])+'/'
     logging.info(f'sending prediction file to azure to {adls_path}')
     az = FileHandling(os.environ[model_dict['connection_str']])
     _ = az.upload_file(
